@@ -1,0 +1,32 @@
+<!--
+  ~ Copyright 2019, Verizon Media.
+  ~ Licensed under the Apache License, Version 2.0
+  ~ See LICENSE file in project root for terms.
+  -->
+
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/html">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Covid-19 API</title>
+    <link rel="stylesheet" href="/api/assets/denali.css"/>
+    <script src="/api/assets/api_main.js"></script>
+    <link rel="stylesheet" href="/api/assets/api_main.css"/>
+</head>
+<body class="denali-default-theme">
+    <nav class="nav">
+        <div class="nav-left">
+            <a href="https://elide.io"><img class="nav-brand" src="/api/assets/images/elide-white-logo.png"/></a>
+        </div>
+        <div class="nav-right">
+            <div class="nav-group">
+                <a id="json-api_switch" class="nav-item is-active">Explore JSON-API</a>
+                <a id="graphiql_switch" class="nav-item">Explore GraphQL</a>
+            </div>
+        </div>
+    </nav>
+    <iframe id="iframe" src="/api/swagger/index.html"/>
+</body>
+</html>

@@ -1,0 +1,15 @@
+target/
+test-output/
+.settings
+.classpath
+.checkstyle
+.idea/
+.sonar/
+*.iml
+bin
+dependency-reduced-pom.xml
+*.jar
+*.class
+*tags
+**.swp
+.project

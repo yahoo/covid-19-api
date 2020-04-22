@@ -1,0 +1,12 @@
+################################################
+# Copyright 2020, Verizon Media.
+# Licensed under the Apache License, Version 2.0
+# See LICENSE file in project root for terms.
+################################################
+
+spring:
+  application:
+    name: Elide-Covid19
+
+logging:
+  path: /tmp/log/covid-19-api

@@ -1,0 +1,43 @@
+<!--
+ *  Copyright (c) 2019 GraphQL Contributors
+ *  All rights reserved.
+ *
+ *  This source code is licensed under the license found in the
+ *  LICENSE file in the root directory of this source tree.
+-->
+
+<!--
+Source code adapted from
+https://github.com/graphql/graphiql/blob/f94f4bdcae15ccf2402cd3c98bf3c37163686882/packages/examples/graphiql-cdn/index.html
+-->
+<!DOCTYPE html>
+<html>
+  <head>
+    <link rel="stylesheet" href="/api/graphiql/assets/graphql_main.css"/>
+
+    <!--
+      This GraphiQL example depends on Promise and fetch, which are available in
+      modern browsers, but can be "polyfilled" for older browsers.
+      GraphiQL itself depends on React DOM.
+      If you do not want to rely on a CDN, you can host these files locally or
+      include them directly in your favored resource bunder.
+    -->
+    <script src="/api/graphiql/assets/es6-promise.auto.min.js"></script>
+    <script src="/api/graphiql/assets/fetch.min.js"></script>
+    <script src="/api/graphiql/assets/react.min.js"></script>
+    <script src="/api/graphiql/assets/react-dom.min.js"></script>
+
+    <!--
+      These two files can be found in the npm module, however you may wish to
+      copy them directly into your environment, or perhaps include them in your
+      favored resource bundler.
+     -->
+    <link rel="stylesheet" href="/api/graphiql/assets/graphiql.css"/>
+    <script src="/api/graphiql/assets/graphiql.js" charset="utf-8"></script>
+
+  </head>
+  <body>
+    <div id="graphiql">Loading...</div>
+    <script src="/api/graphiql/assets/graphql_main.js" charset="utf-8"></script>
+  </body>
+</html>

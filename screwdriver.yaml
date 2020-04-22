@@ -1,0 +1,27 @@
+jobs:
+  build:
+    annotations:
+        screwdriver.cd/disk: HIGH
+        screwdriver.cd/ram: HIGH
+        screwdriver.cd/buildPeriodically: H * * * *
+    secrets:
+        - BINTRAY_USER
+        - BINTRAY_API_KEY
+        # Remove SCM_* secrets once project is public
+        - SCM_USERNAME
+        - SCM_ACCESS_TOKEN
+        - DATA_REPO_USERNAME
+        - DATA_REPO_ACCESSKEY
+    environment:
+      VERSION: $SD_EVENT_ID
+    image: maven:3.6.3-jdk-8-openj9
+    requires: [~pr, ~commit]
+    steps:
+      - test: mvn clean test
+      - publish: |
+          if [ ! -z $SD_PULL_REQUEST ]; then
+            echo Skipping publish in PR build
+          else
+             mvn versions:set -DnewVersion=1.5.${VERSION} -DprocessAllModules=true
+             mvn -B -DskipTests -DdownloadDataFromRepo=true clean deploy --settings ./settings.xml
+          fi

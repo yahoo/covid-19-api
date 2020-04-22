@@ -1,0 +1,47 @@
+################################################
+# Copyright 2020, Verizon Media.
+# Licensed under the Apache License, Version 2.0
+# See LICENSE file in project root for terms.
+################################################
+
+elide:
+  json-api:
+    path: /api/json/v1
+    enabled: false # Turned Off so we can use our own async controller
+  graphql:
+    path: /api/graphql/v1
+    enabled: false
+  swagger:
+    path: /api/doc/v1
+    enabled: true
+    version: "1.0"
+  pageSize: 50
+  maxPageSize: 4000
+
+spring:
+  application:
+    name: Elide-Covid19
+  mvc:
+    async:
+      request-timeout: 8000
+
+server:
+  port: 8080
+
+logging:
+  path: /tmp/log/covid-19-api
+
+security:
+  origin: "*"
+  cache:
+    enabled: false
+    duration: 60
+  whiteList:
+    ruleState: on
+    uri:
+      - /api/json/v1/healthRecords{{ALL}}
+      - /api/json/v1/latestHealthRecords{{ALL}}
+      - /api/json/v1/metadata?fields[metadata]=healthRecordsEndDate,healthRecordsStartDate
+user:
+  timezone: "UTC"
+

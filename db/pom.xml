@@ -1,0 +1,82 @@
+<!--
+  ~ Copyright 2020, Verizon Media.
+  ~ Licensed under the Apache License, Version 2.0
+  ~ See LICENSE file in project root for terms.
+  -->
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <artifactId>covid-19-api-db</artifactId>
+    <name>Covid 19 API H2 Database</name>
+    <description>Covid 19 API H2 Database</description>
+    <groupId>com.yahoo.covid19</groupId>
+    <packaging>jar</packaging>
+    <version>1.5-SNAPSHOT</version>
+
+    <parent>
+        <groupId>com.yahoo.covid19</groupId>
+        <artifactId>covid-19-api-parent-pom</artifactId>
+        <version>1.5-SNAPSHOT</version>
+    </parent>
+
+    <properties>
+        <downloadDataFromRepo>false</downloadDataFromRepo>
+    </properties>
+
+    <dependencies>
+
+        <!-- Runtime -->
+        <dependency>
+            <groupId>com.yahoo.covid19</groupId>
+            <artifactId>covid-19-api-dbbuilder</artifactId>
+            <version>1.5-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>commons-logging</groupId>
+            <artifactId>commons-logging</artifactId>
+            <version>(1.0,2.0)</version>
+        </dependency>
+
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>1.6.0</version>
+                <executions>
+                    <execution>
+                        <id>codegeneration</id>
+                        <phase>generate-resources</phase>
+                        <goals><goal>java</goal></goals>
+                        <configuration>
+                            <mainClass>com.yahoo.covid19.database.DatabaseBuilder</mainClass>
+                            <arguments>
+                                <argument>
+                                    -o${project.build.directory}/classes/covid19
+                                </argument>
+                                <argument>
+                                    -ihttps://github.com/yahoo/covid-19-data/tarball/master
+                                </argument>
+                                <argument>
+                                    -r${downloadDataFromRepo}
+                                </argument>
+                                <argument>
+                                    -u${DATA_REPO_USERNAME}
+                                </argument>
+                                <argument>
+                                    -t${DATA_REPO_ACCESSKEY}
+                                </argument>
+                                <argument>
+                                    -p5.0
+                                </argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>

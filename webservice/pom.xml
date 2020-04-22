@@ -1,0 +1,150 @@
+<!--
+  ~ Copyright 2020, Verizon Media.
+  ~ Licensed under the Apache License, Version 2.0
+  ~ See LICENSE file in project root for terms.
+  -->
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <artifactId>covid-19-api-webservice</artifactId>
+    <name>Covid 19 API Webservice</name>
+    <description>Covid 19 API Webservice</description>
+    <groupId>com.yahoo.covid19</groupId>
+    <version>1.5-SNAPSHOT</version>
+
+    <parent>
+        <groupId>com.yahoo.covid19</groupId>
+        <artifactId>covid-19-api-parent-pom</artifactId>
+        <version>1.5-SNAPSHOT</version>
+    </parent>
+
+    <properties>
+        <jar.finalName>covid-19-api</jar.finalName>
+        <elide.version>4.5.16</elide.version>
+    </properties>
+
+    <dependencies>
+        <!-- Runtime -->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.yahoo.elide</groupId>
+            <artifactId>elide-spring-boot-starter</artifactId>
+            <version>${elide.version}</version>
+        </dependency>
+
+        <!-- For custom construction of EntityManagerFactory -->
+        <dependency>
+            <groupId>com.yahoo.elide</groupId>
+            <artifactId>elide-standalone</artifactId>
+            <version>${elide.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-sleuth</artifactId>
+            <version>2.2.0.RELEASE</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-security</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>2.6</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+        </dependency>
+
+        <!-- Request/Response logging -->
+        <dependency>
+            <groupId>net.rakugakibox.spring.boot</groupId>
+            <artifactId>logback-access-spring-boot-starter</artifactId>
+            <version>2.7.1</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.yahoo.covid19</groupId>
+            <artifactId>covid-19-api-db</artifactId>
+            <version>1.5-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.yahoo.covid19</groupId>
+            <artifactId>covid-19-api-dbbuilder</artifactId>
+            <version>1.5-SNAPSHOT</version>
+        </dependency>
+        <!-- Test -->
+
+        <dependency>
+            <groupId>com.yahoo.elide</groupId>
+            <artifactId>elide-test-helpers</artifactId>
+            <version>${elide.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.jayway.restassured</groupId>
+            <artifactId>rest-assured</artifactId>
+            <version>2.9.0</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <version>${spring.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-engine</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-params</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <finalName>${jar.finalName}</finalName>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <version>${spring.version}</version>
+                <configuration>
+                    <mainClass>com.yahoo.covid19.App</mainClass>
+                    <layout>JAR</layout>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>
