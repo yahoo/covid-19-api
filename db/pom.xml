@@ -20,7 +20,7 @@
     </parent>
 
     <properties>
-        <downloadDataFromRepo>false</downloadDataFromRepo>
+        <downloadDataFromRepo>true</downloadDataFromRepo>
     </properties>
 
     <dependencies>
@@ -62,12 +62,6 @@
                                 </argument>
                                 <argument>
                                     -r${downloadDataFromRepo}
-                                </argument>
-                                <argument>
-                                    -u${DATA_REPO_USERNAME}
-                                </argument>
-                                <argument>
-                                    -t${DATA_REPO_ACCESSKEY}
                                 </argument>
                                 <argument>
                                     -p5.0
