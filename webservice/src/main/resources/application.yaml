@@ -74,7 +74,7 @@ security:
     enabled: true
     duration: 3600
   whiteList:
-    ruleState: warn
+    ruleState: on
     uri:
       - /api/json/v1/counties?fields[counties]={{FIELD_ATTRIBUTES}}&fields[states]={{FIELD_ATTRIBUTES}}&fields[countries]={{FIELD_ATTRIBUTES}}&filter=id=={{ALPHA_NUMERIC}}&include=state,state.country{{PAGINATION}}
       - /api/json/v1/counties?fields[counties]={{FIELD_ATTRIBUTES}}&fields[states]={{FIELD_ATTRIBUTES}}&fields[countries]={{FIELD_ATTRIBUTES}}&filter=wikiId=={{TYPE_AHEAD_CHARACTERS}}&include=state,state.country{{PAGINATION}}
