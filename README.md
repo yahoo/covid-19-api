@@ -8,11 +8,9 @@ The API is powered by [Elide.io](https://elide.io) - an open source framework fo
 
 ## Getting Started
 
-The API to power the dashboard is publicly hosted by Verizon Media, but is restricted to only the query shapes needed by the dashboard. You can spin up your own fully accessible instance of the API on Heroku:
+The API to power the dashboard is publicly hosted by Verizon Media, but is restricted to only the query shapes needed by the dashboard. 
 
-[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/yahoo/covid-19-api)
-
-The Heroku application landing page supports both [Swagger](https://swagger.io/) documentation and the [GraphiQL](https://github.com/graphql/graphiql) IDE to get familiar with the APIs.
+The Application landing page supports both [Swagger](https://swagger.io/) documentation and the [GraphiQL](https://github.com/graphql/graphiql) IDE to get familiar with the APIs.
 The default landing page is `/api/index.html` which can switch between Swagger and GraphiQL. Specific endpoints for Swagger and GraphiQL can be found at `/api/swagger/index.html` and `/api/graphiql/index.html` respectively.
 
 ![jsonapi_landing_page](docs/jsonapi_landing_page.png) ![graphql_landing_page](docs/graphiql_landing_page.png)
