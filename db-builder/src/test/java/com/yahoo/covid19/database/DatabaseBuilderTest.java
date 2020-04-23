@@ -60,9 +60,9 @@ public class DatabaseBuilderTest {
         try (DatabaseBuilder.DBConnector connector = builder.newDBConnector()) {
             countCheck(connector, "health_records", null, 2743);
             countCheck(connector, "health_records", "label = 'Earth'", 1);
-            countCheck(connector, "country", null,204);
-            countCheck(connector, "state", null,232);
-            countCheck(connector, "county", null,3137);
+            countCheck(connector, "place", null,3573);
+//            countCheck(connector, "state", null,232);
+//            countCheck(connector, "county", null,3137);
         }
     }
 
@@ -71,8 +71,8 @@ public class DatabaseBuilderTest {
     public void testInvalidEntries() throws Exception {
         try (DatabaseBuilder.DBConnector connector = builder.newDBConnector()) {
             countCheck(connector, "health_records", "label != 'Earth' AND countryId IS NULL", 0);
-            countCheck(connector, "state", "countryId IS NULL",0);
-            countCheck(connector, "county", "stateId IS NULL OR countryId IS NULL",0);
+//            countCheck(connector, "state", "countryId IS NULL",0);
+//            countCheck(connector, "county", "stateId IS NULL OR countryId IS NULL",0);
         }
     }
 

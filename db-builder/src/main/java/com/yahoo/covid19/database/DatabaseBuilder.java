@@ -67,43 +67,7 @@ public class DatabaseBuilder {
     private static final String JDBC_DRIVER = "org.h2.Driver";
     private static final String DATA_RESOURCE_FILE = "covid-19-data.tar.gz";
 
-    private static final String CREATE_COUNTY = "CREATE TABLE IF NOT EXISTS county\n" +
-            "(\n" +
-            "    id VARCHAR(255) DEFAULT NOT NULL,\n" +
-            "    label VARCHAR(255) DEFAULT NULL,\n" +
-            "    wikiId VARCHAR(255) DEFAULT NULL,\n" +
-            "    longitude DOUBLE NOT NULL,\n" +
-            "    latitude DOUBLE NOT NULL,\n" +
-            "    population BIGINT DEFAULT NULL,\n" +
-            "    stateId VARCHAR(255) DEFAULT NULL,\n" +
-            "    countryId VARCHAR(255) DEFAULT NULL,\n" +
-            "    PRIMARY KEY (id),\n" +
-            ");" +
-            "CREATE INDEX countyLongitudeIdx ON county (longitude);\n " +
-            "CREATE INDEX countyLatitudeIdx ON county (latitude);\n " +
-            "CREATE INDEX countyStateIdIdx ON county (stateId);\n " +
-            "CREATE INDEX countyCountryIdIdx ON county (countryId);\n " +
-            "CREATE INDEX countyWikiIdx ON county (wikiId);\n " +
-            "CREATE INDEX countyLabelIdx ON county (label);\n";
-
-    private static final String CREATE_STATE = "CREATE TABLE IF NOT EXISTS state\n" +
-            "(\n" +
-            "    id VARCHAR(255) DEFAULT NOT NULL,\n" +
-            "    label VARCHAR(255) DEFAULT NULL,\n" +
-            "    wikiId VARCHAR(255) DEFAULT NULL,\n" +
-            "    longitude DOUBLE NOT NULL,\n" +
-            "    latitude DOUBLE NOT NULL,\n" +
-            "    population BIGINT DEFAULT NULL,\n" +
-            "    countryId VARCHAR(255) DEFAULT NULL,\n" +
-            "    PRIMARY KEY (id),\n" +
-            ");" +
-            "CREATE INDEX stateLongitudeIdx ON state (longitude);\n " +
-            "CREATE INDEX stateLatitudeIdx ON state (latitude);\n " +
-            "CREATE INDEX stateCountryIdIdx ON state (countryId);\n " +
-            "CREATE INDEX stateWikiIdx ON state (wikiId);\n" +
-            "CREATE INDEX stateLabelIdx ON state (label);\n ";
-
-    private static final String CREATE_COUNTRY = "CREATE TABLE IF NOT EXISTS country\n" +
+    private static final String CREATE_PLACE = "CREATE TABLE IF NOT EXISTS place\n" +
             "(\n" +
             "    id VARCHAR(255) DEFAULT NOT NULL,\n" +
             "    label VARCHAR(255) DEFAULT NULL,\n" +
@@ -113,19 +77,24 @@ public class DatabaseBuilder {
             "    population BIGINT DEFAULT NULL,\n" +
             "    PRIMARY KEY (id),\n" +
             ");\n" +
-            "CREATE INDEX countryLongitudeIdx ON country (longitude);\n " +
-            "CREATE INDEX countryLatitudeIdx ON country (latitude);\n " +
-            "CREATE INDEX countryWikiIdx ON country (wikiId);\n" +
-            "CREATE INDEX countryLabelIdx ON country (label);\n ";
+            "CREATE INDEX placeLongitudeIdx ON place (longitude);\n " +
+            "CREATE INDEX placeLatitudeIdx ON place (latitude);\n " +
+            "CREATE INDEX placeWikiIdx ON place (wikiId);\n" +
+            "CREATE INDEX placeLabelIdx ON place (label);\n ";
+
+    private static final String CREATE_RELATIONSHIPS = "CREATE TABLE IF NOT EXISTS relationship_hierarchy\n" +
+            "(\n" +
+            "    childId VARCHAR(255) DEFAULT NOT NULL,\n" +
+            "    parentId VARCHAR(255) DEFAULT NULL,\n" +
+            "    PRIMARY KEY (childId, parentId),\n" +
+            ");\n";
 
     private static final String CREATE_HEALTH_RECORDS = "CREATE TABLE IF NOT EXISTS health_records\n" +
             "(\n" +
             "    id UUID NOT NULL,\n" +
             "    label VARCHAR(255) NOT NULL,\n" +
             "    referenceDate TIMESTAMP NOT NULL,\n" +
-            "    countyId VARCHAR(255) DEFAULT NULL,\n" +
-            "    stateId VARCHAR(255) DEFAULT NULL,\n" +
-            "    countryId VARCHAR(255) DEFAULT NULL,\n" +
+            "    regionId VARCHAR(255) DEFAULT NULL,\n" +
             "    longitude DOUBLE NOT NULL,\n" +
             "    latitude DOUBLE NOT NULL,\n" +
             "    wikiId VARCHAR(255) DEFAULT NULL,\n" +
@@ -141,10 +110,8 @@ public class DatabaseBuilder {
             "    numTested BIGINT DEFAULT NULL,\n" +
             "    PRIMARY KEY (id),\n" +
             ");\n" +
-            "CREATE INDEX healthRecordsCountyIdIdx ON health_records (countyId);\n" +
-            "CREATE INDEX healthRecordsStateIdIdx ON health_records (stateId);\n" +
-            "CREATE INDEX healthRecordsDateIdIdx ON health_records (referenceDate);\n" +
-            "CREATE INDEX healthRecordsCountryIdIdx ON health_records (countryId);";
+            "CREATE INDEX healthRecordsRegionIdIdx ON health_records (regionId);\n" +
+            "CREATE INDEX healthRecordsDateIdIdx ON health_records (referenceDate);";
 
 
     private static final String CREATE_LATEST_HEALTH_RECORDS = "CREATE TABLE IF NOT EXISTS latest_health_records\n" +
@@ -152,9 +119,7 @@ public class DatabaseBuilder {
             "    id UUID NOT NULL,\n" +
             "    label VARCHAR(255) NOT NULL,\n" +
             "    referenceDate TIMESTAMP NOT NULL,\n" +
-            "    countyId VARCHAR(255) DEFAULT NULL,\n" +
-            "    stateId VARCHAR(255) DEFAULT NULL,\n" +
-            "    countryId VARCHAR(255) DEFAULT NULL,\n" +
+            "    regionId VARCHAR(255) DEFAULT NULL,\n" +
             "    longitude DOUBLE NOT NULL,\n" +
             "    latitude DOUBLE NOT NULL,\n" +
             "    wikiId VARCHAR(255) DEFAULT NULL,\n" +
@@ -170,9 +135,7 @@ public class DatabaseBuilder {
             "    numTested BIGINT DEFAULT NULL,\n" +
             "    PRIMARY KEY (id),\n" +
             ");\n" +
-            "CREATE INDEX healthRecordsLatestCountyIdIdx ON latest_health_records (countyId);\n" +
-            "CREATE INDEX healthRecordsLatestStateIdIdx ON latest_health_records (stateId);\n" +
-            "CREATE INDEX healthRecordsLatestCountryIdIdx ON latest_health_records (countryId);";
+            "CREATE INDEX latestHealthRecordsRegionIdIdx ON latest_health_records (regionId);";
 
     private static final String CREATE_METADATA = "CREATE TABLE IF NOT EXISTS metadata\n" +
             "(\n" +
@@ -327,9 +290,8 @@ public class DatabaseBuilder {
     }
 
     public void createTables(DBConnector connector) throws SQLException {
-        connector.executeSQLQuery(CREATE_COUNTRY);
-        connector.executeSQLQuery(CREATE_STATE);
-        connector.executeSQLQuery(CREATE_COUNTY);
+        connector.executeSQLQuery(CREATE_PLACE);
+        connector.executeSQLQuery(CREATE_RELATIONSHIPS);
         connector.executeSQLQuery(CREATE_HEALTH_RECORDS);
         connector.executeSQLQuery(CREATE_LATEST_HEALTH_RECORDS);
         connector.executeSQLQuery(CREATE_METADATA);
@@ -385,8 +347,10 @@ public class DatabaseBuilder {
             createTables(connector);
 
             for (Insertable toInsert : filteredInsertables) {
-                try(PreparedStatement insertStatement = toInsert.getStatement(connector)) {
-                    connector.executePreparedStatement(insertStatement);
+                for (PreparedStatement insertStatement : toInsert.getStatement(connector)) {
+                    try(PreparedStatement closableStatement = insertStatement) {
+                        connector.executePreparedStatement(closableStatement);
+                    }
                 }
             }
         } catch (Exception e) {
@@ -398,7 +362,7 @@ public class DatabaseBuilder {
         double totalDbRecords = 0;
         double invalid_perc = 100;
         try (DBConnector dbConnector = newDBConnector()) {
-            for (String tableName : Arrays.<String>asList("health_records","latest_health_records", "country", "state", "county")) {
+            for (String tableName : Arrays.<String>asList("health_records","latest_health_records", "place")) {
                 int rowCount = (int) dbConnector.executeSQLQuery("SELECT COUNT(*) FROM " + tableName + ";",
                         resultSet -> {
                             try {

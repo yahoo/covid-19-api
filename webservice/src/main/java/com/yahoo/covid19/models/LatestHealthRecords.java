@@ -13,7 +13,7 @@ import java.util.UUID;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 @Include(rootLevel = true, type = "latestHealthRecords")
@@ -23,17 +23,9 @@ public class LatestHealthRecords {
     @Id
     private UUID id;
 
-    @JoinColumn(name = "countyId")
-    @ManyToOne
-    private County county;
-
-    @JoinColumn(name = "stateId")
-    @ManyToOne
-    private State state;
-
-    @JoinColumn(name = "countryId")
-    @ManyToOne
-    private Country country;
+    @JoinColumn(name = "regionId")
+    @OneToOne
+    private Place place;
 
     private String label;
     private String wikiId;

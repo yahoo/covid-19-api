@@ -17,6 +17,8 @@ import lombok.extern.slf4j.Slf4j;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import static com.yahoo.covid19.database.ErrorCodes.DANGLING_FOREIGN_KEY;
@@ -34,21 +36,16 @@ import com.google.gson.annotations.JsonAdapter;
 @Slf4j
 @Data
 public class Places implements Insertable {
+    public static String EARTH_ID = null;
     private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-    private static final String COUNTY_INSERT_STATEMENT = "INSERT INTO county ("
+    private static final String PLACE_INSERT_STATEMENT = "INSERT INTO place ("
                 + "id, label, wikiId, longitude, "
-                + "latitude, population, stateId, countryId) "
-                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?);";
+                + "latitude, population) "
+                + "VALUES (?, ?, ?, ?, ?, ?);";
 
-    private static final String STATE_INSERT_STATEMENT = "INSERT INTO state ("
-            + "id, label, wikiId, longitude, "
-            + "latitude, population, countryId) "
-            + "VALUES (?, ?, ?, ?, ?, ?, ?);";
-
-    private static final String COUNTRY_INSERT_STATEMENT = "INSERT INTO country ("
-            + "id, label, wikiId, longitude, "
-            + "latitude, population) "
-            + "VALUES (?, ?, ?, ?, ?, ?);";
+    private static final String RELATIONSHIP_INSERT_STATEMENT = "INSERT INTO relationship_hierarchy ("
+            + "childId, parentId) "
+            + "VALUES (?, ?);";
 
     private final String id;
     private final String label;
@@ -65,8 +62,8 @@ public class Places implements Insertable {
     private transient ErrorCodes errorCode = OK;
 
 
-    private PreparedStatement getCommonStatement(DatabaseBuilder.DBConnector connector, String insert_template) throws SQLException {
-        PreparedStatement statement = connector.getPreparedStatement(insert_template);
+    private PreparedStatement getCommonStatement(DatabaseBuilder.DBConnector connector) throws SQLException {
+        PreparedStatement statement = connector.getPreparedStatement(PLACE_INSERT_STATEMENT);
         statement.setString(1, id);
         statement.setString(2, label);
         statement.setString(3, wikiId);
@@ -76,28 +73,39 @@ public class Places implements Insertable {
         return statement;
     }
 
+    private PreparedStatement getRelationshipStatement(DatabaseBuilder.DBConnector connector, String parentId) throws SQLException {
+
+
+        PreparedStatement statement = connector.getPreparedStatement(RELATIONSHIP_INSERT_STATEMENT);
+        statement.setString(1, id);
+        statement.setString(2, parentId);
+        return statement;
+    }
+
     @Override
-    public PreparedStatement getStatement(DatabaseBuilder.DBConnector connector) throws SQLException {
-        PreparedStatement statement;
+    public List<PreparedStatement> getStatement(DatabaseBuilder.DBConnector connector) throws SQLException {
+        List<PreparedStatement> statements = new ArrayList<>();
+        String parentId;
         switch (type) {
-            case Country:
             case Supername:
-                statement = getCommonStatement(connector, COUNTRY_INSERT_STATEMENT);
+                parentId = "";
+                break;
+            case Country:
+                parentId = EARTH_ID;
                 break;
             case StateAdminArea:
-                statement = getCommonStatement(connector, STATE_INSERT_STATEMENT);
-                statement.setString(7, countryId);
+                parentId = countryId;
                 break;
             case CountyAdminArea:
-                statement = getCommonStatement(connector, COUNTY_INSERT_STATEMENT);
-                statement.setString(7, stateId);
-                statement.setString(8, countryId);
+                parentId = stateId;
                 break;
             default:
                 throw new IllegalStateException("invalid geographical type: " + type);
         }
+        statements.add(getCommonStatement(connector));
+        statements.add(getRelationshipStatement(connector, parentId));
 
-        return statement;
+        return statements;
     }
 
     @Override
@@ -208,5 +216,8 @@ public class Places implements Insertable {
 
     @Override
     public void getForiegnKeyFields(Map<String, Insertable> foreignKeyMap) {
+        if (type.equals(JoinTableNames.Supername)) {
+            EARTH_ID = id;
+        }
     }
 }

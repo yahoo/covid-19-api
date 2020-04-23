@@ -11,6 +11,7 @@ import com.yahoo.covid19.database.ErrorCodes;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -24,7 +25,7 @@ public interface Insertable {
      * @return A prepared statement with parameters filled in.
      * @throws SQLException
      */
-    PreparedStatement getStatement(DatabaseBuilder.DBConnector connector) throws SQLException;
+    List<PreparedStatement> getStatement(DatabaseBuilder.DBConnector connector) throws SQLException;
 
     /**
      * Validates the input record prior to DB insertion.

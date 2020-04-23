@@ -16,7 +16,9 @@ import lombok.extern.slf4j.Slf4j;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.text.ParseException;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -24,9 +26,6 @@ import static com.yahoo.covid19.database.ErrorCodes.DANGLING_FOREIGN_KEY;
 import static com.yahoo.covid19.database.ErrorCodes.INVALID_DATE;
 import static com.yahoo.covid19.database.ErrorCodes.MISSING_FOREIGN_KEY;
 import static com.yahoo.covid19.database.ErrorCodes.OK;
-import static com.yahoo.covid19.database.JoinTableNames.Country;
-import static com.yahoo.covid19.database.JoinTableNames.CountyAdminArea;
-import static com.yahoo.covid19.database.JoinTableNames.StateAdminArea;
 
 
 @Data
@@ -52,8 +51,6 @@ public class HealthRecords implements Insertable {
     // Fields from foreign table
     private String wikiId;
     private JoinTableNames regionType;
-    private String stateId;
-    private String countryId;
     private Double longitude;
     private Double latitude;
 
@@ -66,15 +63,15 @@ public class HealthRecords implements Insertable {
     protected final String getInsertStatement() {
         return String.format(
                 "INSERT INTO %s ("
-                + "id, label, referenceDate, countyId, stateId, countryId, longitude, latitude, wikiId, dataSource,"
+                + "id, label, referenceDate, regionId, longitude, latitude, wikiId, dataSource,"
                 + "totalDeaths, totalConfirmedCases, totalRecoveredCases, totalTestedCases, "
                 + "numActiveCases, numDeaths, numPendingTests, numRecoveredCases, numTested) "
-                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
+                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
                 getTableName());
     }
 
     @Override
-    public PreparedStatement getStatement(DatabaseBuilder.DBConnector connector) throws SQLException {
+    public List<PreparedStatement> getStatement(DatabaseBuilder.DBConnector connector) throws SQLException {
         Date parsedReferenceDate = null;
         try {
             parsedReferenceDate = DatabaseBuilder.REFERENCE_DATE_FORMAT.parse(referenceDate);
@@ -85,23 +82,21 @@ public class HealthRecords implements Insertable {
         statement.setObject(1, getId());
         statement.setString(2, label);
         statement.setString(3, DatabaseBuilder.DB_DATE_FORMAT.format(parsedReferenceDate));
-        statement.setString(4, regionType.equals(CountyAdminArea) ? regionId : null);
-        statement.setString(5, regionType.equals(StateAdminArea) ? regionId : stateId);
-        statement.setString(6, regionType.equals(Country) ? regionId : countryId);
-        statement.setDouble(7, longitude);
-        statement.setDouble(8, latitude);
-        statement.setString(9, wikiId);
-        statement.setString(10, dataSource);
-        statement.setObject(11, totalDeaths == null ? null : Long.valueOf(totalDeaths));
-        statement.setObject(12, totalConfirmedCases == null ? null : Long.valueOf(totalConfirmedCases));
-        statement.setObject(13, totalRecoveredCases == null ? null : Long.valueOf(totalRecoveredCases));
-        statement.setObject(14, totalTestedCases == null ? null : Long.valueOf(totalTestedCases));
-        statement.setObject(15, numActiveCases == null ? null : Long.valueOf(numActiveCases));
-        statement.setObject(16, numDeaths == null ? null : Long.valueOf(numDeaths));
-        statement.setObject(17, numPendingTests == null ? null : Long.valueOf(numPendingTests));
-        statement.setObject(18, numRecoveredCases == null ? null : Long.valueOf(numRecoveredCases));
-        statement.setObject(19, numTests == null ? null : Long.valueOf(numTests));
-        return statement;
+        statement.setString(4, regionId);
+        statement.setDouble(5, longitude);
+        statement.setDouble(6, latitude);
+        statement.setString(7, wikiId);
+        statement.setString(8, dataSource);
+        statement.setObject(9, totalDeaths == null ? null : Long.valueOf(totalDeaths));
+        statement.setObject(10, totalConfirmedCases == null ? null : Long.valueOf(totalConfirmedCases));
+        statement.setObject(11, totalRecoveredCases == null ? null : Long.valueOf(totalRecoveredCases));
+        statement.setObject(12, totalTestedCases == null ? null : Long.valueOf(totalTestedCases));
+        statement.setObject(13, numActiveCases == null ? null : Long.valueOf(numActiveCases));
+        statement.setObject(14, numDeaths == null ? null : Long.valueOf(numDeaths));
+        statement.setObject(15, numPendingTests == null ? null : Long.valueOf(numPendingTests));
+        statement.setObject(16, numRecoveredCases == null ? null : Long.valueOf(numRecoveredCases));
+        statement.setObject(17, numTests == null ? null : Long.valueOf(numTests));
+        return Arrays.asList(statement);
     }
 
     private Places lookUpPlace(Map<String, Insertable> foreignKeyMap) {
@@ -152,7 +147,5 @@ public class HealthRecords implements Insertable {
         this.longitude = place.getLongitude() == null ? 0.0 : Double.valueOf(place.getLongitude());
         this.wikiId = place.getWikiId();
         this.regionType = place.getType();
-        this.stateId = place.getStateId();
-        this.countryId = place.getCountryId();
     }
 }
