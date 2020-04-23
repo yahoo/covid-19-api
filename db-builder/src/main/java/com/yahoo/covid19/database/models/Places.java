@@ -88,7 +88,7 @@ public class Places implements Insertable {
         String parentId;
         switch (type) {
             case Supername:
-                parentId = "";
+                parentId = null;
                 break;
             case Country:
                 parentId = EARTH_ID;
@@ -103,7 +103,9 @@ public class Places implements Insertable {
                 throw new IllegalStateException("invalid geographical type: " + type);
         }
         statements.add(getCommonStatement(connector));
-        statements.add(getRelationshipStatement(connector, parentId));
+        if (parentId != null) {
+            statements.add(getRelationshipStatement(connector, parentId));
+        }
 
         return statements;
     }

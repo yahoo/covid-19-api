@@ -60,7 +60,7 @@ public class ApiTest extends IntegrationTest {
     @Test
     void jsonApiGetTest1() {
         when()
-                .get("/api/json/v1/healthRecords?fields[healthRecords]=label,latitude,longitude,referenceDate,wikiId,country,county,state"
+                .get("/api/json/v1/healthRecords?fields[healthRecords]=label,latitude,longitude,referenceDate,wikiId,place"
                         + "&filter[healthRecords]=referenceDate=='2020-04-03T00:00Z';id=='9efefa57-483f-3433-92d6-d7ee602a3837'")
                 .then()
                 .log().all()
@@ -77,14 +77,8 @@ public class ApiTest extends IntegrationTest {
                                                 attr("wikiId", "Amador_County,_California")
                                         ),
                                         relationships(
-                                                relation("country", true,
-                                                        linkage(type("countries"), id("09d4bca31e2fd8b0f57f79f85ed42bd8"))
-                                                ),
-                                                relation("county", true,
-                                                        linkage(type("counties"), id("cbd1e9dcc37cbc62e35cf5d3d949c53b"))
-                                                ),
-                                                relation("state", true,
-                                                        linkage(type("states"), id("356779a9a1696714480f57fa3fb66d4c"))
+                                                relation("place", true,
+                                                        linkage(type("places"), id("cbd1e9dcc37cbc62e35cf5d3d949c53b"))
                                                 )
                                         )
                                 )
@@ -100,7 +94,7 @@ public class ApiTest extends IntegrationTest {
     @Test
     void jsonApiGetTest2() {
         when()
-                .get("/api/json/v1/healthRecords?fields[healthRecords]=label,latitude,longitude,referenceDate,wikiId,country,county,state"
+                .get("/api/json/v1/healthRecords?fields[healthRecords]=label,latitude,longitude,referenceDate,wikiId,place"
                         + "&filter[healthRecords]=referenceDate=='2020-04-03T00:00Z';id=='501e00ff-e71f-3a43-808c-deed478e1b0c'")
                 .then()
                 .log().all()
@@ -117,11 +111,9 @@ public class ApiTest extends IntegrationTest {
                                                 attr("wikiId", "Colombia")
                                         ),
                                         relationships(
-                                                relation("country", true,
-                                                        linkage(type("countries"), id("ef3388cc5659bccb742fb8af762f1bfd"))
-                                                ),
-                                                relation("county", true),
-                                                relation("state", true)
+                                                relation("place", true,
+                                                        linkage(type("places"), id("ef3388cc5659bccb742fb8af762f1bfd"))
+                                                )
                                         )
                                 )
                         ).toJSON())
@@ -136,7 +128,7 @@ public class ApiTest extends IntegrationTest {
     @Test
     void jsonApiGetTest3() {
         when()
-                .get("/api/json/v1/healthRecords?fields[healthRecords]=label,latitude,longitude,referenceDate,wikiId,country,county,state"
+                .get("/api/json/v1/healthRecords?fields[healthRecords]=label,latitude,longitude,referenceDate,wikiId,place"
                         + "&filter[healthRecords]=referenceDate=='2020-04-03T00:00Z';label=='Washington, D.C.'")
                 .then()
                 .log().all()
@@ -153,12 +145,8 @@ public class ApiTest extends IntegrationTest {
                                                 attr("wikiId", "Washington,_D.C.")
                                         ),
                                         relationships(
-                                                relation("country", true,
-                                                        linkage(type("countries"), id("09d4bca31e2fd8b0f57f79f85ed42bd8"))
-                                                ),
-                                                relation("county", true),
-                                                relation("state", true,
-                                                        linkage(type("states"), id("323f55d1d77b6a46bacc81745f69a234"))
+                                                relation("place", true,
+                                                        linkage(type("places"), id("323f55d1d77b6a46bacc81745f69a234"))
                                                 )
                                         )
                                 )
@@ -171,8 +159,8 @@ public class ApiTest extends IntegrationTest {
     @Test
     void testEarthRecord() {
         when()
-                .get("/api/json/v1/healthRecords?fields[healthRecords]=label,latitude,longitude,referenceDate,wikiId,country,county,state"
-                        + "&filter=referenceDate=='2020-04-03T00:00Z';county=isnull=true;country=isnull=true;state=isnull=true")
+                .get("/api/json/v1/healthRecords?fields[healthRecords]=label,latitude,longitude,referenceDate,wikiId,place"
+                        + "&filter=referenceDate=='2020-04-03T00:00Z';label=='Earth'")
                 .then()
                 .log().all()
                 .body(equalTo(
@@ -188,9 +176,9 @@ public class ApiTest extends IntegrationTest {
                                                 attr("wikiId", "Earth")
                                         ),
                                         relationships(
-                                                relation("country", true),
-                                                relation("county", true),
-                                                relation("state", true)
+                                                relation("place", true,
+                                                        linkage(type("places"), id("5cdd21c97f86686cc505e02fd32a7523"))
+                                                )
                                         )
                                 )
                         ).toJSON())
@@ -202,8 +190,8 @@ public class ApiTest extends IntegrationTest {
     @Test
     void testCompoundFilterPredicate() {
         when()
-                .get("/api/json/v1/healthRecords?fields[healthRecords]=label,latitude,longitude,referenceDate,wikiId,country,county,state"
-                        + "&filter=referenceDate=='2020-04-03T00:00Z';county=isnull=true;country=isnull=true;state=isnull=true")
+                .get("/api/json/v1/healthRecords?fields[healthRecords]=label,latitude,longitude,referenceDate,wikiId,place"
+                        + "&filter=referenceDate=='2020-04-03T00:00Z';place.parents=isempty=true")
                 .then()
                 .log().all()
                 .body(equalTo(
@@ -219,9 +207,9 @@ public class ApiTest extends IntegrationTest {
                                                 attr("wikiId", "Earth")
                                         ),
                                         relationships(
-                                                relation("country", true),
-                                                relation("county", true),
-                                                relation("state", true)
+                                                relation("place", true,
+                                                        linkage(type("places"), id("5cdd21c97f86686cc505e02fd32a7523"))
+                                                )
                                         )
                                 )
                         ).toJSON())
@@ -231,9 +219,9 @@ public class ApiTest extends IntegrationTest {
     }
 
     @Test
-    void countyTableTest() {
+    void placeTableTest() {
         when()
-                .get("/api/json/v1/healthRecords?filter[healthRecords]=referenceDate=='2020-04-03T00:00Z';id=='9efefa57-483f-3433-92d6-d7ee602a3837'&include=county&fields[counties]=longitude,latitude")
+                .get("/api/json/v1/healthRecords?filter[healthRecords]=referenceDate=='2020-04-03T00:00Z';id=='9efefa57-483f-3433-92d6-d7ee602a3837'&include=place&fields[places]=longitude,latitude")
                 .then()
                 .log().all()
                 .body(equalTo(
@@ -246,7 +234,7 @@ public class ApiTest extends IntegrationTest {
                                 ),
                                 include(
                                         resource(
-                                                type("counties"),
+                                                type("places"),
                                                 id("cbd1e9dcc37cbc62e35cf5d3d949c53b"),
                                                 attributes(
                                                         attr("latitude", 38.4617),
