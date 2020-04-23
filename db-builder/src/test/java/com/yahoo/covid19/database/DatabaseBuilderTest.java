@@ -105,8 +105,12 @@ public class DatabaseBuilderTest {
                         }
                     }
             );
-            // 22 configured indexes and 5 primary keys
-            assertEquals(12, rowCount);
+            // 5 configured indexes
+            // 1 primary key index for healthRecords
+            // 1 primary key index for latestHealthRecords
+            // 1 primary key index for places
+            // 2 primary key index for relationship_hierarchy
+            assertEquals(10, rowCount);
         }
     }
 }

@@ -75,10 +75,8 @@ public class DatabaseBuilder {
             "    longitude DOUBLE NOT NULL,\n" +
             "    latitude DOUBLE NOT NULL,\n" +
             "    population BIGINT DEFAULT NULL,\n" +
-            "    PRIMARY KEY (id),\n" +
+            "    PRIMARY KEY (id)\n" +
             ");\n" +
-            "CREATE INDEX placeLongitudeIdx ON place (longitude);\n " +
-            "CREATE INDEX placeLatitudeIdx ON place (latitude);\n " +
             "CREATE INDEX placeWikiIdx ON place (wikiId);\n" +
             "CREATE INDEX placeLabelIdx ON place (label);\n ";
 
@@ -86,7 +84,7 @@ public class DatabaseBuilder {
             "(\n" +
             "    childId VARCHAR(255) DEFAULT NOT NULL,\n" +
             "    parentId VARCHAR(255) DEFAULT NULL,\n" +
-            "    PRIMARY KEY (childId, parentId),\n" +
+            "    PRIMARY KEY (childId, parentId)\n" +
             ");\n";
 
     private static final String CREATE_HEALTH_RECORDS = "CREATE TABLE IF NOT EXISTS health_records\n" +
@@ -108,7 +106,7 @@ public class DatabaseBuilder {
             "    numPendingTests BIGINT DEFAULT NULL,\n" +
             "    numRecoveredCases BIGINT DEFAULT NULL,\n" +
             "    numTested BIGINT DEFAULT NULL,\n" +
-            "    PRIMARY KEY (id),\n" +
+            "    PRIMARY KEY (id)\n" +
             ");\n" +
             "CREATE INDEX healthRecordsRegionIdIdx ON health_records (regionId);\n" +
             "CREATE INDEX healthRecordsDateIdIdx ON health_records (referenceDate);";
@@ -133,7 +131,7 @@ public class DatabaseBuilder {
             "    numPendingTests BIGINT DEFAULT NULL,\n" +
             "    numRecoveredCases BIGINT DEFAULT NULL,\n" +
             "    numTested BIGINT DEFAULT NULL,\n" +
-            "    PRIMARY KEY (id),\n" +
+            "    PRIMARY KEY (id)\n" +
             ");\n" +
             "CREATE INDEX latestHealthRecordsRegionIdIdx ON latest_health_records (regionId);";
 
