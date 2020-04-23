@@ -1,7 +1,0 @@
-{
-  "name": "Elide Covid-19 API",
-  "description": "Elide Covid-19 API exposing Yahoo Knowledge data",
-  "repository": "https://github.com/yahoo/covid-19-api",
-  "logo": "https://elide.io//assets/images/elide-white-logo.png",
-  "keywords": ["java", "elide", "graphql", "json-api", "yahoo", "knowledge", "covid19", "covid-19"]
-}
