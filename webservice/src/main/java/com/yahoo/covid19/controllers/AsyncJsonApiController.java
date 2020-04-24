@@ -31,9 +31,12 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.security.Principal;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.concurrent.Callable;
+import java.util.stream.Collectors;
 
+import static com.yahoo.covid19.database.DBUtils.DB_FILE_NAME;
 import static com.yahoo.elide.spring.controllers.JsonApiController.JSON_API_CONTENT_TYPE;
 
 import lombok.extern.slf4j.Slf4j;
@@ -87,17 +90,27 @@ public class AsyncJsonApiController {
                                 );
                             }
                         }
-
                     }
+
                     return controller.elideGet(allRequestParams, request, authentication);
+
                 } catch (UnsupportedEncodingException ex) {
+
                     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
+
                 } catch (PersistenceException ex) {
-                    if (ex.getMessage().contains("org.hibernate.exception.GenericJDBCException")) {
+
+                    // Db read error implies Database moved to transient state. All subsequent queries will throws error.
+                    String exceptionCause = ".*\\Qorg.hibernate.exception.GenericJDBCException: could not extract ResultSet\\E.*";
+                    String dbReadError = ".*\\Qjava.lang.IllegalStateException: Reading from\\E.*\\Q" + DB_FILE_NAME + " failed;\\E.*(\\R*.*)*";
+
+                    if (checkExceptionMsg(ex, exceptionCause) && checkExceptionMsg(ex.getCause(), dbReadError)) {
                         log.error("Shuting Down the service");
                         SpringApplication.exit(context, () -> 0);
                     }
-                    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Server Error - " + ex.getLocalizedMessage());
+
+                    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Server Error\n" + ex.getLocalizedMessage());
+
                 } catch (Exception e) {
                     if (e instanceof InterruptedException) {
                         return ResponseEntity.status(HttpStatus.REQUEST_TIMEOUT).body("Request Timeout");
@@ -106,5 +119,14 @@ public class AsyncJsonApiController {
                 }
             }
         };
+    }
+
+    private boolean checkExceptionMsg(Throwable th, String regex) {
+        if (th == null) {
+            return false;
+        }
+        return th.getLocalizedMessage() != null && th.getLocalizedMessage().matches(regex)
+                ? true
+                : checkExceptionMsg(th.getCause(), regex);
     }
 }
