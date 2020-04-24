@@ -13,7 +13,10 @@ import com.yahoo.covid19.filters.URIQueryValidator;
 import com.yahoo.elide.Elide;
 import com.yahoo.elide.spring.config.ElideConfigProperties;
 import com.yahoo.elide.spring.controllers.JsonApiController;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.SpringApplication;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,6 +24,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import javax.persistence.PersistenceException;
 import javax.servlet.http.HttpServletRequest;
 
 import java.io.UnsupportedEncodingException;
@@ -45,12 +49,19 @@ public class AsyncJsonApiController {
     JsonApiController controller;
     SecurityConfigProperties securityProperties;
     URIQueryValidator queryValidator;
+    ApplicationContext context;
+
 
     @Autowired
-    public AsyncJsonApiController(Elide elide, ElideConfigProperties settings, SecurityConfigProperties properties) {
+    public AsyncJsonApiController(Elide elide,
+                                  ElideConfigProperties settings,
+                                  SecurityConfigProperties properties,
+                                  ApplicationContext context
+                                  ) {
         controller = new JsonApiController(elide, settings);
         this.securityProperties = properties;
         this.queryValidator = new URIQueryValidator(properties.getWhiteList().getUri());
+        this.context = context;
     }
 
     @GetMapping(value = "/**", produces = JSON_API_CONTENT_TYPE)
@@ -81,6 +92,12 @@ public class AsyncJsonApiController {
                     return controller.elideGet(allRequestParams, request, authentication);
                 } catch (UnsupportedEncodingException ex) {
                     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
+                } catch (PersistenceException ex) {
+                    if (ex.getMessage().contains("org.hibernate.exception.GenericJDBCException")) {
+                        log.error("Shuting Down the service");
+                        SpringApplication.exit(context, () -> 0);
+                    }
+                    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Server Error - " + ex.getLocalizedMessage());
                 } catch (Exception e) {
                     if (e instanceof InterruptedException) {
                         return ResponseEntity.status(HttpStatus.REQUEST_TIMEOUT).body("Request Timeout");
