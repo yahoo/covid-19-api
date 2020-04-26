@@ -20,7 +20,7 @@
     </parent>
 
     <properties>
-        <downloadDataFromRepo>true</downloadDataFromRepo>
+        <downloadDataFromRepo>false</downloadDataFromRepo>
     </properties>
 
     <dependencies>

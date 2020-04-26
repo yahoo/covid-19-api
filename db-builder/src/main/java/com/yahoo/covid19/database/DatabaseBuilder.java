@@ -70,6 +70,7 @@ public class DatabaseBuilder {
     private static final String CREATE_PLACE = "CREATE TABLE IF NOT EXISTS place\n" +
             "(\n" +
             "    id VARCHAR(255) DEFAULT NOT NULL,\n" +
+            "    type VARCHAR(255) DEFAULT NULL,\n" +
             "    label VARCHAR(255) DEFAULT NULL,\n" +
             "    wikiId VARCHAR(255) DEFAULT NULL,\n" +
             "    longitude DOUBLE NOT NULL,\n" +
@@ -103,7 +104,6 @@ public class DatabaseBuilder {
             "    totalTestedCases BIGINT DEFAULT NULL,\n" +
             "    numActiveCases BIGINT DEFAULT NULL,\n" +
             "    numDeaths BIGINT DEFAULT NULL,\n" +
-            "    numPendingTests BIGINT DEFAULT NULL,\n" +
             "    numRecoveredCases BIGINT DEFAULT NULL,\n" +
             "    numTested BIGINT DEFAULT NULL,\n" +
             "    PRIMARY KEY (id)\n" +
@@ -128,7 +128,6 @@ public class DatabaseBuilder {
             "    totalTestedCases BIGINT DEFAULT NULL,\n" +
             "    numActiveCases BIGINT DEFAULT NULL,\n" +
             "    numDeaths BIGINT DEFAULT NULL,\n" +
-            "    numPendingTests BIGINT DEFAULT NULL,\n" +
             "    numRecoveredCases BIGINT DEFAULT NULL,\n" +
             "    numTested BIGINT DEFAULT NULL,\n" +
             "    PRIMARY KEY (id)\n" +

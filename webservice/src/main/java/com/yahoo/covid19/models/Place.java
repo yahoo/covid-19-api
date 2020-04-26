@@ -10,6 +10,7 @@ import com.yahoo.elide.annotation.Include;
 
 import java.util.Set;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -21,6 +22,8 @@ import javax.persistence.ManyToMany;
 public class Place {
     @Id
     private String id;
+    @Column(name = "type")
+    private String regionType;
     private String label;
     private String wikiId;
     private Double longitude;

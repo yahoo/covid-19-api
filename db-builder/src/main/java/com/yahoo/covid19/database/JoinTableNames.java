@@ -13,7 +13,8 @@ public enum JoinTableNames {
     Supername(0),
     Country(1),
     StateAdminArea(2),
-    CountyAdminArea(3)
+    CountyAdminArea(3),
+    CityTown(4)
     ;
 
     private int rank;
