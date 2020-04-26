@@ -97,9 +97,9 @@ public class Places implements Insertable {
 
     @Override
     public boolean isValid(Map<String, Insertable> foreignKeyMap) {
-//        if (isValid != null) {
-//            return isValid;
-//        }
+        if (isValid != null) {
+            return isValid;
+        }
         isValid = isValidRegion(foreignKeyMap);
         return isValid;
     }
