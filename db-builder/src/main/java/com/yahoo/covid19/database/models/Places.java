@@ -8,8 +8,6 @@ package com.yahoo.covid19.database.models;
 
 import com.yahoo.covid19.database.DatabaseBuilder;
 import com.yahoo.covid19.database.ErrorCodes;
-import com.yahoo.covid19.database.JoinTableNames;
-import com.yahoo.covid19.database.gsonAdapters.TableNameAdapter;
 
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
@@ -28,7 +26,8 @@ import static com.yahoo.covid19.database.ErrorCodes.INVALID_TYPE;
 import static com.yahoo.covid19.database.ErrorCodes.MISSING_FOREIGN_KEY;
 import static com.yahoo.covid19.database.ErrorCodes.OK;
 
-import com.google.gson.annotations.JsonAdapter;
+import com.google.gson.Gson;
+import com.google.gson.annotations.SerializedName;
 
 /**
  * Used to slurp County records from Yahoo Knowledge Graph.
@@ -36,7 +35,9 @@ import com.google.gson.annotations.JsonAdapter;
 @Slf4j
 @Data
 public class Places implements Insertable {
-    public static String EARTH_ID = null;
+    public static final String TABLE_NAME = "places";
+    private static final String SUPERNAME = "Supername";
+    private static final Gson gson = new Gson();
     private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     private static final String PLACE_INSERT_STATEMENT = "INSERT INTO place ("
                 + "id, type, label, wikiId, longitude, "
@@ -48,24 +49,22 @@ public class Places implements Insertable {
             + "VALUES (?, ?);";
 
     private final String id;
+    private final List<String> type;
     private final String label;
     private final String wikiId;
     private final String longitude;
     private final String latitude;
     private final String population;
-    private final List<String> parentId;
-
-    @JsonAdapter(TableNameAdapter.class)
-    private final JoinTableNames type;
+    @SerializedName(value = "parentId")
+    private final List<String> parentIds;
 
     private transient ErrorCodes errorCode = OK;
-    private transient Boolean isValid = null;
 
 
     private PreparedStatement getCommonStatement(DatabaseBuilder.DBConnector connector) throws SQLException {
         PreparedStatement statement = connector.getPreparedStatement(PLACE_INSERT_STATEMENT);
         statement.setString(1, id);
-        statement.setString(2, type.name());
+        statement.setString(2, gson.toJson(type));
         statement.setString(3, label);
         statement.setString(4, wikiId);
         statement.setDouble(5, (longitude == null) ? 0 : Double.valueOf(longitude));
@@ -88,8 +87,8 @@ public class Places implements Insertable {
         List<PreparedStatement> statements = new ArrayList<>();
         statements.add(getCommonStatement(connector));
 
-        for (String parent : parentId) {
-            statements.add(getRelationshipStatement(connector, parent));
+        for (String parentId : parentIds) {
+            statements.add(getRelationshipStatement(connector, parentId));
         }
 
         return statements;
@@ -97,25 +96,17 @@ public class Places implements Insertable {
 
     @Override
     public boolean isValid(Map<String, Insertable> foreignKeyMap) {
-        if (isValid != null) {
-            return isValid;
-        }
-        isValid = isValidRegion(foreignKeyMap);
-        return isValid;
-    }
-
-    private boolean isValidRegion(Map<String, Insertable> foreignKeyMap) {
         if (id == null || id.isEmpty()) {
             errorCode = INVALID_ID;
             return false;
         }
 
-        if (type == null) {
+        if (this.type == null || this.type.isEmpty()) {
             errorCode = INVALID_TYPE;
             return false;
         }
 
-        if (type.equals(JoinTableNames.Supername)) {
+        if (this.type.contains(SUPERNAME)) {
             return true;
         }
 
@@ -124,21 +115,25 @@ public class Places implements Insertable {
             return false;
         }
 
-        if (parentId == null || parentId.isEmpty()) {
+        if (parentIds == null || parentIds.isEmpty()) {
             errorCode = MISSING_FOREIGN_KEY;
             return false;
         }
-        return parentId.stream()
-                .map(parent -> foreignKeyMap.get(parent))
+        boolean isParentValid =  parentIds.stream()
+                .map(parentId -> foreignKeyMap.get(parentId))
                 .allMatch(
                         insertable -> {
                             if (insertable == null || !insertable.isValid(foreignKeyMap)) {
-                                this.errorCode = DANGLING_FOREIGN_KEY;
                                 return false;
                             }
                             return true;
                         }
                 );
+        if (!isParentValid) {
+            this.errorCode = DANGLING_FOREIGN_KEY;
+            return false;
+        }
+        return true;
     }
 
     private boolean isValidCoordinate(String coordinate) {
@@ -164,13 +159,10 @@ public class Places implements Insertable {
 
     @Override
     public String getTableName() {
-        return type == null ? "" : type.name();
+        return TABLE_NAME;
     }
 
     @Override
     public void getForiegnKeyFields(Map<String, Insertable> foreignKeyMap) {
-        if (type.equals(JoinTableNames.Supername)) {
-            EARTH_ID = id;
-        }
     }
 }

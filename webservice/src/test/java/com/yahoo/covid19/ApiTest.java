@@ -35,6 +35,8 @@ import com.yahoo.elide.core.HttpStatus;
 import com.yahoo.elide.spring.controllers.JsonApiController;
 import org.junit.jupiter.api.Test;
 
+import java.util.Arrays;
+
 import javax.ws.rs.core.MediaType;
 
 /**
@@ -263,8 +265,8 @@ public class ApiTest extends IntegrationTest {
                                                 attr("label", "Washington, D.C."),
                                                 attr("latitude", 38.90476),
                                                 attr("longitude", -77.01625),
+                                                attr("placeType", Arrays.asList("CityTown","StateAdminArea")),
                                                 attr("population", 705749),
-                                                attr("regionType", "StateAdminArea"),
                                                 attr("wikiId", "Washington,_D.C.")
                                         ),
                                         relationships(

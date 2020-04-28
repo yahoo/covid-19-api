@@ -65,13 +65,13 @@ public class DatabaseBuilderTest {
     @Test
     public void test() throws Exception {
         try (DatabaseBuilder.DBConnector connector = builder.newDBConnector()) {
-            countCheck(connector, "health_records", null, 3486);
+            countCheck(connector, "health_records", null, 3489);
             countCheck(connector, "health_records", "label = 'Earth'", 1);
             countCheck(connector, "health_records",
                     "LEFT JOIN relationship_hierarchy ON relationship_hierarchy.childId = health_records.regionId",
                     "health_records.label = 'Earth' AND relationship_hierarchy.parentId IS NULL", 1);
 
-            countCheck(connector, "place", null,3798);
+            countCheck(connector, "place", null,3801);
             countCheck(connector, "place", "label = 'Earth'", 1);
             countCheck(connector, "place",
                     "LEFT JOIN relationship_hierarchy ON relationship_hierarchy.childId = place.id",

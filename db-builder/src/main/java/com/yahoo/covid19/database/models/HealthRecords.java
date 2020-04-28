@@ -8,7 +8,6 @@ package com.yahoo.covid19.database.models;
 
 import com.yahoo.covid19.database.DatabaseBuilder;
 import com.yahoo.covid19.database.ErrorCodes;
-import com.yahoo.covid19.database.JoinTableNames;
 
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
@@ -49,7 +48,7 @@ public class HealthRecords implements Insertable {
 
     // Fields from foreign table
     private String wikiId;
-    private JoinTableNames regionType;
+    private List<String> regionTypes;
     private Double longitude;
     private Double latitude;
 
@@ -144,6 +143,6 @@ public class HealthRecords implements Insertable {
         this.latitude = place.getLatitude() == null ? 0.0 : Double.valueOf(place.getLatitude());
         this.longitude = place.getLongitude() == null ? 0.0 : Double.valueOf(place.getLongitude());
         this.wikiId = place.getWikiId();
-        this.regionType = place.getType();
+        this.regionTypes = place.getType();
     }
 }

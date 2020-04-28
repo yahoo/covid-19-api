@@ -300,7 +300,7 @@ public class DatabaseBuilder {
 
     private void buildForeignKeyValidatorMap() {
         foreignKeyMap = insertables.stream()
-                .filter(insertable -> JoinTableNames.contains(insertable.getTableName()))
+                .filter(insertable -> insertable.getTableName().equals(Places.TABLE_NAME))
                 .collect(Collectors.toMap(
                         insertable -> insertable.getId().toString(),
                         insertable -> insertable,
