@@ -23,7 +23,7 @@ spring:
     name: Elide-Covid19
   mvc:
     async:
-      request-timeout: 8000
+      request-timeout: 30000
 
 server:
   port: 8080
