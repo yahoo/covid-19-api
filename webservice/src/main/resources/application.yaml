@@ -48,6 +48,9 @@ user:
 
 spring:
   profiles: production
+  mvc:
+    async:
+      request-timeout: 30000
 
 elide:
   json-api:
