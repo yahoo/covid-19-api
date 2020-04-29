@@ -97,6 +97,7 @@ public class DatabaseBuilder {
             "    longitude DOUBLE NOT NULL,\n" +
             "    latitude DOUBLE NOT NULL,\n" +
             "    wikiId VARCHAR(255) DEFAULT NULL,\n" +
+            "    parentPlaces VARCHAR(255) DEFAULT NULL,\n" +
             "    dataSource VARCHAR(255) DEFAULT NULL,\n" +
             "    totalDeaths BIGINT DEFAULT NULL,\n" +
             "    totalConfirmedCases BIGINT DEFAULT NULL,\n" +
@@ -121,6 +122,7 @@ public class DatabaseBuilder {
             "    longitude DOUBLE NOT NULL,\n" +
             "    latitude DOUBLE NOT NULL,\n" +
             "    wikiId VARCHAR(255) DEFAULT NULL,\n" +
+            "    parentPlaces VARCHAR(255) DEFAULT NULL,\n" +
             "    dataSource VARCHAR(255) DEFAULT NULL,\n" +
             "    totalDeaths BIGINT DEFAULT NULL,\n" +
             "    totalConfirmedCases BIGINT DEFAULT NULL,\n" +

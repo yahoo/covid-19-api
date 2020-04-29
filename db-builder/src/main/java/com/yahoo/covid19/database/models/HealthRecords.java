@@ -26,11 +26,14 @@ import static com.yahoo.covid19.database.ErrorCodes.INVALID_DATE;
 import static com.yahoo.covid19.database.ErrorCodes.MISSING_FOREIGN_KEY;
 import static com.yahoo.covid19.database.ErrorCodes.OK;
 
+import com.google.gson.Gson;
+
 
 @Data
 @Slf4j
 public class HealthRecords implements Insertable {
     public static final String TABLE_NAME = "health_records";
+    private static final Gson gson = new Gson();
 
     private UUID id = null;
     private String regionId;
@@ -51,6 +54,7 @@ public class HealthRecords implements Insertable {
     private List<String> regionTypes;
     private Double longitude;
     private Double latitude;
+    private List<String> parentPlaces;
 
     private transient ErrorCodes errorCode = OK;
 
@@ -61,10 +65,10 @@ public class HealthRecords implements Insertable {
     protected final String getInsertStatement() {
         return String.format(
                 "INSERT INTO %s ("
-                + "id, label, referenceDate, regionId, longitude, latitude, wikiId, dataSource,"
+                + "id, label, referenceDate, regionId, longitude, latitude, wikiId, dataSource, parentPlaces"
                 + "totalDeaths, totalConfirmedCases, totalRecoveredCases, totalTestedCases, "
                 + "numActiveCases, numDeaths, numRecoveredCases, numTested) "
-                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
+                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
                 getTableName());
     }
 
@@ -85,14 +89,15 @@ public class HealthRecords implements Insertable {
         statement.setDouble(6, latitude);
         statement.setString(7, wikiId);
         statement.setString(8, dataSource);
-        statement.setObject(9, totalDeaths == null ? null : Long.valueOf(totalDeaths));
-        statement.setObject(10, totalConfirmedCases == null ? null : Long.valueOf(totalConfirmedCases));
-        statement.setObject(11, totalRecoveredCases == null ? null : Long.valueOf(totalRecoveredCases));
-        statement.setObject(12, totalTestedCases == null ? null : Long.valueOf(totalTestedCases));
-        statement.setObject(13, numActiveCases == null ? null : Long.valueOf(numActiveCases));
-        statement.setObject(14, numDeaths == null ? null : Long.valueOf(numDeaths));
-        statement.setObject(15, numRecoveredCases == null ? null : Long.valueOf(numRecoveredCases));
-        statement.setObject(16, numTests == null ? null : Long.valueOf(numTests));
+        statement.setObject(9, gson.toJson(parentPlaces));
+        statement.setObject(10, totalDeaths == null ? null : Long.valueOf(totalDeaths));
+        statement.setObject(11, totalConfirmedCases == null ? null : Long.valueOf(totalConfirmedCases));
+        statement.setObject(12, totalRecoveredCases == null ? null : Long.valueOf(totalRecoveredCases));
+        statement.setObject(13, totalTestedCases == null ? null : Long.valueOf(totalTestedCases));
+        statement.setObject(14, numActiveCases == null ? null : Long.valueOf(numActiveCases));
+        statement.setObject(15, numDeaths == null ? null : Long.valueOf(numDeaths));
+        statement.setObject(16, numRecoveredCases == null ? null : Long.valueOf(numRecoveredCases));
+        statement.setObject(17, numTests == null ? null : Long.valueOf(numTests));
         return Arrays.asList(statement);
     }
 
@@ -144,5 +149,6 @@ public class HealthRecords implements Insertable {
         this.longitude = place.getLongitude() == null ? 0.0 : Double.valueOf(place.getLongitude());
         this.wikiId = place.getWikiId();
         this.regionTypes = place.getType();
+        this.parentPlaces = place.getParentIds();
     }
 }

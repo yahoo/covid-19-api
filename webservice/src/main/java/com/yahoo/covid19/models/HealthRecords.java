@@ -7,12 +7,15 @@ package com.yahoo.covid19.models;
 
 import com.yahoo.elide.annotation.Include;
 
+import org.hibernate.annotations.Type;
+
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 @Include(rootLevel = true, type = "healthRecords")
@@ -25,6 +28,9 @@ public class HealthRecords {
     @JoinColumn(name = "regionId")
     @ManyToOne
     private Place place;
+
+    @Type(type = "com.yahoo.covid19.usertypes.StringCollection")
+    private List<String> parentPlaces;
 
     private String label;
     private String wikiId;
