@@ -38,7 +38,6 @@ public class LatestHealthRecords {
     private Long totalTestedCases;
     private Long numActiveCases;
     private Long numDeaths;
-    private Long numPendingTests;
     private Long numRecoveredCases;
     private Long numTested;
     private String dataSource;

@@ -35,6 +35,8 @@ import com.yahoo.elide.core.HttpStatus;
 import com.yahoo.elide.spring.controllers.JsonApiController;
 import org.junit.jupiter.api.Test;
 
+import java.util.Arrays;
+
 import javax.ws.rs.core.MediaType;
 
 /**
@@ -61,24 +63,24 @@ public class ApiTest extends IntegrationTest {
     void jsonApiGetTest1() {
         when()
                 .get("/api/json/v1/healthRecords?fields[healthRecords]=label,latitude,longitude,referenceDate,wikiId,place"
-                        + "&filter[healthRecords]=referenceDate=='2020-04-03T00:00Z';id=='9efefa57-483f-3433-92d6-d7ee602a3837'")
+                        + "&filter[healthRecords]=referenceDate=='2020-04-23T00:00Z';label=='Amador County, California'")
                 .then()
                 .log().all()
                 .body(equalTo(
                         data(
                                 resource(
                                         type("healthRecords"),
-                                        id("9efefa57-483f-3433-92d6-d7ee602a3837"),
+                                        id("3ac72e25-a6b8-3934-9868-24f9272c58ac"),
                                         attributes(
                                                 attr("label", "Amador County, California"),
                                                 attr("latitude", 38.4617),
                                                 attr("longitude", -120.55011),
-                                                attr("referenceDate", "2020-04-03T00:00Z"),
+                                                attr("referenceDate", "2020-04-23T00:00Z"),
                                                 attr("wikiId", "Amador_County,_California")
                                         ),
                                         relationships(
                                                 relation("place", true,
-                                                        linkage(type("places"), id("cbd1e9dcc37cbc62e35cf5d3d949c53b"))
+                                                        linkage(type("places"), id("ee448a31"))
                                                 )
                                         )
                                 )
@@ -95,24 +97,24 @@ public class ApiTest extends IntegrationTest {
     void jsonApiGetTest2() {
         when()
                 .get("/api/json/v1/healthRecords?fields[healthRecords]=label,latitude,longitude,referenceDate,wikiId,place"
-                        + "&filter[healthRecords]=referenceDate=='2020-04-03T00:00Z';id=='501e00ff-e71f-3a43-808c-deed478e1b0c'")
+                        + "&filter[healthRecords]=referenceDate=='2020-04-23T00:00Z';id=='9c165277-bdbf-38af-a796-aed685954c11'")
                 .then()
                 .log().all()
                 .body(equalTo(
                         data(
                                 resource(
                                         type("healthRecords"),
-                                        id("501e00ff-e71f-3a43-808c-deed478e1b0c"),
+                                        id("9c165277-bdbf-38af-a796-aed685954c11"),
                                         attributes(
                                                 attr("label", "Colombia"),
                                                 attr("latitude", 4.11641),
                                                 attr("longitude", -72.95853),
-                                                attr("referenceDate", "2020-04-03T00:00Z"),
+                                                attr("referenceDate", "2020-04-23T00:00Z"),
                                                 attr("wikiId", "Colombia")
                                         ),
                                         relationships(
                                                 relation("place", true,
-                                                        linkage(type("places"), id("ef3388cc5659bccb742fb8af762f1bfd"))
+                                                        linkage(type("places"), id("59af5790"))
                                                 )
                                         )
                                 )
@@ -129,24 +131,24 @@ public class ApiTest extends IntegrationTest {
     void jsonApiGetTest3() {
         when()
                 .get("/api/json/v1/healthRecords?fields[healthRecords]=label,latitude,longitude,referenceDate,wikiId,place"
-                        + "&filter[healthRecords]=referenceDate=='2020-04-03T00:00Z';label=='Washington, D.C.'")
+                        + "&filter[healthRecords]=referenceDate=='2020-04-23T00:00Z';label=='Washington, D.C.'")
                 .then()
                 .log().all()
                 .body(equalTo(
                         data(
                                 resource(
                                         type("healthRecords"),
-                                        id("17b24842-e1a1-307f-b1be-cdf46f8485cd"),
+                                        id("4dec25e7-8f68-3c38-a09e-16c4d093c612"),
                                         attributes(
                                                 attr("label", "Washington, D.C."),
                                                 attr("latitude", 38.90476),
                                                 attr("longitude", -77.01625),
-                                                attr("referenceDate", "2020-04-03T00:00Z"),
+                                                attr("referenceDate", "2020-04-23T00:00Z"),
                                                 attr("wikiId", "Washington,_D.C.")
                                         ),
                                         relationships(
                                                 relation("place", true,
-                                                        linkage(type("places"), id("323f55d1d77b6a46bacc81745f69a234"))
+                                                        linkage(type("places"), id("1df77997"))
                                                 )
                                         )
                                 )
@@ -160,24 +162,24 @@ public class ApiTest extends IntegrationTest {
     void testEarthRecord() {
         when()
                 .get("/api/json/v1/healthRecords?fields[healthRecords]=label,latitude,longitude,referenceDate,wikiId,place"
-                        + "&filter=referenceDate=='2020-04-03T00:00Z';label=='Earth'")
+                        + "&filter=referenceDate=='2020-04-23T00:00Z';label=='Earth'")
                 .then()
                 .log().all()
                 .body(equalTo(
                         data(
                                 resource(
                                         type("healthRecords"),
-                                        id("ba130f87-cd92-3d0b-be82-2dca3c7a3561"),
+                                        id("2c880a9c-8593-30d5-803b-5b9f280412f3"),
                                         attributes(
                                                 attr("label", "Earth"),
                                                 attr("latitude", 0.0),
                                                 attr("longitude", 0.0),
-                                                attr("referenceDate", "2020-04-03T00:00Z"),
+                                                attr("referenceDate", "2020-04-23T00:00Z"),
                                                 attr("wikiId", "Earth")
                                         ),
                                         relationships(
                                                 relation("place", true,
-                                                        linkage(type("places"), id("5cdd21c97f86686cc505e02fd32a7523"))
+                                                        linkage(type("places"), id("1713c6c2"))
                                                 )
                                         )
                                 )
@@ -191,24 +193,54 @@ public class ApiTest extends IntegrationTest {
     void testCompoundFilterPredicate() {
         when()
                 .get("/api/json/v1/healthRecords?fields[healthRecords]=label,latitude,longitude,referenceDate,wikiId,place"
-                        + "&filter=referenceDate=='2020-04-03T00:00Z';place.parents=isempty=true")
+                        + "&filter=referenceDate=='2020-04-23T00:00Z';place.parents=isempty=true")
                 .then()
                 .log().all()
                 .body(equalTo(
                         data(
                                 resource(
                                         type("healthRecords"),
-                                        id("ba130f87-cd92-3d0b-be82-2dca3c7a3561"),
+                                        id("2c880a9c-8593-30d5-803b-5b9f280412f3"),
                                         attributes(
                                                 attr("label", "Earth"),
                                                 attr("latitude", 0.0),
                                                 attr("longitude", 0.0),
-                                                attr("referenceDate", "2020-04-03T00:00Z"),
+                                                attr("referenceDate", "2020-04-23T00:00Z"),
                                                 attr("wikiId", "Earth")
                                         ),
                                         relationships(
                                                 relation("place", true,
-                                                        linkage(type("places"), id("5cdd21c97f86686cc505e02fd32a7523"))
+                                                        linkage(type("places"), id("1713c6c2"))
+                                                )
+                                        )
+                                )
+                        ).toJSON())
+                )
+                .log().all()
+                .statusCode(HttpStatus.SC_OK);
+    }
+
+    @Test
+    void placeIncludeTest() {
+        when()
+                .get("/api/json/v1/healthRecords?filter[healthRecords]=referenceDate=='2020-04-23T00:00Z';id=='3ac72e25-a6b8-3934-9868-24f9272c58ac'&include=place&fields[places]=longitude,latitude")
+                .then()
+                .log().all()
+                .body(equalTo(
+                        document(
+                                data(
+                                        resource(
+                                                type("healthRecords"),
+                                                id("3ac72e25-a6b8-3934-9868-24f9272c58ac")
+                                        )
+                                ),
+                                include(
+                                        resource(
+                                                type("places"),
+                                                id("ee448a31"),
+                                                attributes(
+                                                        attr("latitude", 38.4617),
+                                                        attr("longitude", -120.55011)
                                                 )
                                         )
                                 )
@@ -221,24 +253,26 @@ public class ApiTest extends IntegrationTest {
     @Test
     void placeTableTest() {
         when()
-                .get("/api/json/v1/healthRecords?filter[healthRecords]=referenceDate=='2020-04-03T00:00Z';id=='9efefa57-483f-3433-92d6-d7ee602a3837'&include=place&fields[places]=longitude,latitude")
+                .get("/api/json/v1/places?filter=id=='1df77997'")
                 .then()
                 .log().all()
                 .body(equalTo(
-                        document(
-                                data(
-                                        resource(
-                                                type("healthRecords"),
-                                                id("9efefa57-483f-3433-92d6-d7ee602a3837")
-                                        )
-                                ),
-                                include(
-                                        resource(
-                                                type("places"),
-                                                id("cbd1e9dcc37cbc62e35cf5d3d949c53b"),
-                                                attributes(
-                                                        attr("latitude", 38.4617),
-                                                        attr("longitude", -120.55011)
+                        data(
+                                resource(
+                                        type("places"),
+                                        id("1df77997"),
+                                        attributes(
+                                                attr("label", "Washington, D.C."),
+                                                attr("latitude", 38.90476),
+                                                attr("longitude", -77.01625),
+                                                attr("placeType", Arrays.asList("CityTown","StateAdminArea")),
+                                                attr("population", 705749),
+                                                attr("wikiId", "Washington,_D.C.")
+                                        ),
+                                        relationships(
+                                                relation("children", false),
+                                                relation("parents", false,
+                                                        linkage(type("places"), id("f4aa12bb"))
                                                 )
                                         )
                                 )
