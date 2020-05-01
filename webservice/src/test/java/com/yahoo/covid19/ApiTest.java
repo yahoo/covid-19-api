@@ -265,7 +265,7 @@ public class ApiTest extends IntegrationTest {
                                                 attr("label", "Washington, D.C."),
                                                 attr("latitude", 38.90476),
                                                 attr("longitude", -77.01625),
-                                                attr("placeType", Arrays.asList("CityTown","StateAdminArea")),
+                                                attr("placeType", "CityTown,StateAdminArea"),
                                                 attr("population", 705749),
                                                 attr("wikiId", "Washington,_D.C.")
                                         ),

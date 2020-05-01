@@ -8,8 +8,6 @@ package com.yahoo.covid19.models;
 
 import com.yahoo.elide.annotation.Include;
 
-import org.hibernate.annotations.Type;
-import java.util.List;
 import java.util.Set;
 
 import javax.persistence.Column;
@@ -26,8 +24,7 @@ public class Place {
     private String id;
 
     @Column(name = "type")
-    @Type(type = "com.yahoo.covid19.usertypes.StringCollection")
-    private List<String> placeType;
+    private String placeType;
     private String label;
     private String wikiId;
     private Double longitude;

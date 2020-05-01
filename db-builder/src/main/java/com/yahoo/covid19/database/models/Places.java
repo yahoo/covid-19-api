@@ -26,7 +26,6 @@ import static com.yahoo.covid19.database.ErrorCodes.INVALID_TYPE;
 import static com.yahoo.covid19.database.ErrorCodes.MISSING_FOREIGN_KEY;
 import static com.yahoo.covid19.database.ErrorCodes.OK;
 
-import com.google.gson.Gson;
 import com.google.gson.annotations.SerializedName;
 
 /**
@@ -37,7 +36,6 @@ import com.google.gson.annotations.SerializedName;
 public class Places implements Insertable {
     public static final String TABLE_NAME = "places";
     private static final String SUPERNAME = "Supername";
-    private static final Gson gson = new Gson();
     private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     private static final String PLACE_INSERT_STATEMENT = "INSERT INTO place ("
                 + "id, type, label, wikiId, longitude, "
@@ -64,7 +62,7 @@ public class Places implements Insertable {
     private PreparedStatement getCommonStatement(DatabaseBuilder.DBConnector connector) throws SQLException {
         PreparedStatement statement = connector.getPreparedStatement(PLACE_INSERT_STATEMENT);
         statement.setString(1, id);
-        statement.setString(2, gson.toJson(type));
+        statement.setString(2, String.join(",", type));
         statement.setString(3, label);
         statement.setString(4, wikiId);
         statement.setDouble(5, (longitude == null) ? 0 : Double.valueOf(longitude));
