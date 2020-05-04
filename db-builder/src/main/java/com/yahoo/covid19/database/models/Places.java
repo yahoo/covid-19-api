@@ -16,6 +16,9 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
@@ -36,6 +39,9 @@ import com.google.gson.annotations.SerializedName;
 public class Places implements Insertable {
     public static final String TABLE_NAME = "places";
     private static final String SUPERNAME = "Supername";
+    private static final List<String> PLACE_TYPE_ORDER = Arrays.asList(
+            "Supername", "Country", "StateAdminArea", "CountyAdminArea", "CityTown", "Island", "Place"
+    );
     private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     private static final String PLACE_INSERT_STATEMENT = "INSERT INTO place ("
                 + "id, type, label, wikiId, longitude, "
@@ -60,6 +66,20 @@ public class Places implements Insertable {
 
 
     private PreparedStatement getCommonStatement(DatabaseBuilder.DBConnector connector) throws SQLException {
+
+        Collections.sort(type, (String str1, String str2) -> {
+            int index1 = PLACE_TYPE_ORDER.indexOf(str1);
+            int index2 = PLACE_TYPE_ORDER.indexOf(str2);
+            if (index1 == -1 && index2 == -1) {
+                return str1.compareTo(str2);
+            }
+            // Types not found in the type order list should be placed at the end.
+            index1 = index1 == -1 ? PLACE_TYPE_ORDER.size() : index1;
+            index2 = index2 == -1 ? PLACE_TYPE_ORDER.size() : index2;
+
+            return index1 - index2;
+        });
+
         PreparedStatement statement = connector.getPreparedStatement(PLACE_INSERT_STATEMENT);
         statement.setString(1, id);
         statement.setString(2, String.join(",", type));
