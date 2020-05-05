@@ -152,6 +152,7 @@ public class DatabaseBuilder {
     private long totalInputRecords = 0;
     private long totalDuplicateRecords = 0;
     private final double invalid_threshold;
+    private final boolean failOnThresholdError;
     private Date lastModifiedDate = new Date();
 
     public class DBConnector implements Closeable {
@@ -224,11 +225,12 @@ public class DatabaseBuilder {
         }
     }
 
-    public DatabaseBuilder(File outputDirectory, double invalid_threshold) {
+    public DatabaseBuilder(File outputDirectory, double invalid_threshold, boolean failOnThresholdError) {
         this.outputDirectory = outputDirectory;
         insertables = new ArrayList<>();
         gson = new GsonBuilder().registerTypeAdapter(Date.class, new GsonUTCDateAdapter()).create();
         this.invalid_threshold = invalid_threshold;
+        this.failOnThresholdError = failOnThresholdError;
     }
 
     public void setLastModifiedDate(Date lastModifiedDate) {
@@ -300,7 +302,8 @@ public class DatabaseBuilder {
 
     private void buildForeignKeyValidatorMap() {
         foreignKeyMap = insertables.stream()
-                .filter(insertable -> insertable.getTableName().equals(Places.TABLE_NAME))
+                .filter(insertable -> insertable.getTableName().equals(Places.TABLE_NAME)
+                        && insertable.getId() != null)
                 .collect(Collectors.toMap(
                         insertable -> insertable.getId().toString(),
                         insertable -> insertable,
@@ -392,7 +395,8 @@ public class DatabaseBuilder {
         log.debug(String.format("Total valid record in db = %g", totalDbRecords));
         log.debug(String.format("Percentage of Invalid Records is %g%%", invalid_perc));
 
-        if (totalInputRecords == 0 || invalid_perc >= invalid_threshold) {
+        if (failOnThresholdError &&
+                (totalInputRecords == 0 || invalid_perc >= invalid_threshold)) {
             throw new IllegalStateException(
                     String.format(
                             "Percentage of Invalid Record %g did not meet the threshold %g",
@@ -422,6 +426,8 @@ public class DatabaseBuilder {
                     "Database Schema Version");
             options.addOption("p", "invalid-perc-threshold", true,
                     "Precentage of invalid rows allowed in input");
+            options.addOption("f", "fail-on-threshold-error", true,
+                    "Flag to enable build failure on threshold error.");
             CommandLineParser parser = new DefaultParser();
             CommandLine commandLine = parser.parse(options, args);
 
@@ -436,13 +442,14 @@ public class DatabaseBuilder {
             String downloadDataFromRepo = commandLine.getOptionValue("download-data-from-repo");
             String githubUsername = commandLine.getOptionValue("github-username");
             String githubAccessToken = commandLine.getOptionValue("github-accesstoken");
-            double invalid_threshold = commandLine.hasOption("invalid-perc-threshold")
+            double invalidThreshold = commandLine.hasOption("invalid-perc-threshold")
                     ? Double.valueOf(commandLine.getOptionValue("invalid-perc-threshold"))
                     : 1;
+            Boolean failOnThresholdError = Boolean.parseBoolean(commandLine.getOptionValue("fail-on-threshold-error"));
 
             log.info("Processing data from {} and writing to {}", githubTarballDownloadUrl, outputDirectory);
 
-            DatabaseBuilder databaseBuilder = new DatabaseBuilder(new File(outputDirectory), invalid_threshold);
+            DatabaseBuilder databaseBuilder = new DatabaseBuilder(new File(outputDirectory), invalidThreshold, failOnThresholdError);
             DataFetcher dataFetcher;
             if ("true".equals(downloadDataFromRepo)) {
                 log.info("Using data from github: {}", githubTarballDownloadUrl);

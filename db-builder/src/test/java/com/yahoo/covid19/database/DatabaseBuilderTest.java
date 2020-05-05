@@ -55,7 +55,7 @@ public class DatabaseBuilderTest {
     public void setup() throws FileNotFoundException, URISyntaxException {
         File outputDirectory = Files.createTempDir();
         outputDirectory.deleteOnExit();
-        builder = new DatabaseBuilder(outputDirectory, 10.0);
+        builder = new DatabaseBuilder(outputDirectory, 10.0, true);
         addInputStrem("/data/metadata/region-metadata.json", builder);
         addInputStrem("/data/by-region-2020-04-24.json", builder);
         builder.build();

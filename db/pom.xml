@@ -20,7 +20,8 @@
     </parent>
 
     <properties>
-        <downloadDataFromRepo>false</downloadDataFromRepo>
+        <downloadDataFromRepo>true</downloadDataFromRepo>
+        <failOnThresholdError>false</failOnThresholdError>
     </properties>
 
     <dependencies>
@@ -58,13 +59,16 @@
                                     -o${project.build.directory}/classes/covid19
                                 </argument>
                                 <argument>
-                                    -ihttps://github.com/yahoo/covid-19-data/tarball/master
+                                    -ihttps://github.com/yahoo/covid-19-data/tarball/schema_v2
                                 </argument>
                                 <argument>
                                     -r${downloadDataFromRepo}
                                 </argument>
                                 <argument>
                                     -p5.0
+                                </argument>
+                                <argument>
+                                    -f${failOnThresholdError}
                                 </argument>
                             </arguments>
                         </configuration>
