@@ -59,7 +59,7 @@
                                     -o${project.build.directory}/classes/covid19
                                 </argument>
                                 <argument>
-                                    -ihttps://github.com/yahoo/covid-19-data/tarball/schema_v2
+                                    -ihttps://github.com/yahoo/covid-19-data/tarball/master
                                 </argument>
                                 <argument>
                                     -r${downloadDataFromRepo}
