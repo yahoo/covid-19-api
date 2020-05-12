@@ -65,7 +65,7 @@
                                     -r${downloadDataFromRepo}
                                 </argument>
                                 <argument>
-                                    -p5.0
+                                    -p10.0
                                 </argument>
                                 <argument>
                                     -f${failOnThresholdError}

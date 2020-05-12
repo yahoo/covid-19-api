@@ -23,7 +23,7 @@ spring:
     name: Elide-Covid19
   mvc:
     async:
-      request-timeout: 8000
+      request-timeout: 30000
 
 server:
   port: 8080
@@ -48,6 +48,9 @@ user:
 
 spring:
   profiles: production
+  mvc:
+    async:
+      request-timeout: 30000
 
 elide:
   json-api:
@@ -77,36 +80,3 @@ security:
     ruleState: warn
     uri:
       - /api/json/v1/metadata?{{PAGINATION}}
-
-
----
-
-spring:
-  profiles: heroku
-
-server:
-  port: ${PORT}
-
-security:
-  origin: "*"
-  indexPageEnabled: true
-  cspEnabled: false
-  cache:
-    enabled: false
-    duration: 60
-  whiteList:
-    ruleState: off
-
-elide:
-  json-api:
-    path: /api/json/v1
-    enabled: false # Turned Off so we can use our own async controller
-  graphql:
-    path: /api/graphql/v1
-    enabled: true
-  swagger:
-    path: /api/doc/v1
-    enabled: true
-    version: "1.0"
-  pageSize: 50
-  maxPageSize: 4000
