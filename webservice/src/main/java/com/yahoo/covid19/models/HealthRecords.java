@@ -22,17 +22,9 @@ public class HealthRecords {
     @Id
     private UUID id;
 
-    @JoinColumn(name = "countyId")
+    @JoinColumn(name = "regionId")
     @ManyToOne
-    private County county;
-
-    @JoinColumn(name = "stateId")
-    @ManyToOne
-    private State state;
-
-    @JoinColumn(name = "countryId")
-    @ManyToOne
-    private Country country;
+    private Place place;
 
     private String label;
     private String wikiId;
@@ -45,7 +37,6 @@ public class HealthRecords {
     private Long totalTestedCases;
     private Long numActiveCases;
     private Long numDeaths;
-    private Long numPendingTests;
     private Long numRecoveredCases;
     private Long numTested;
     private String dataSource;

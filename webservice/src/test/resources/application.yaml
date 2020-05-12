@@ -41,6 +41,7 @@ security:
     uri:
       - /api/json/v1/healthRecords{{ALL}}
       - /api/json/v1/latestHealthRecords{{ALL}}
+      - /api/json/v1/places{{ALL}}
       - /api/json/v1/metadata?fields[metadata]=healthRecordsEndDate,healthRecordsStartDate
 user:
   timezone: "UTC"

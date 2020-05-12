@@ -67,65 +67,33 @@ public class DatabaseBuilder {
     private static final String JDBC_DRIVER = "org.h2.Driver";
     private static final String DATA_RESOURCE_FILE = "covid-19-data.tar.gz";
 
-    private static final String CREATE_COUNTY = "CREATE TABLE IF NOT EXISTS county\n" +
+    private static final String CREATE_PLACE = "CREATE TABLE IF NOT EXISTS place\n" +
             "(\n" +
             "    id VARCHAR(255) DEFAULT NOT NULL,\n" +
+            "    type VARCHAR(255) DEFAULT NULL,\n" +
             "    label VARCHAR(255) DEFAULT NULL,\n" +
             "    wikiId VARCHAR(255) DEFAULT NULL,\n" +
             "    longitude DOUBLE NOT NULL,\n" +
             "    latitude DOUBLE NOT NULL,\n" +
             "    population BIGINT DEFAULT NULL,\n" +
-            "    stateId VARCHAR(255) DEFAULT NULL,\n" +
-            "    countryId VARCHAR(255) DEFAULT NULL,\n" +
-            "    PRIMARY KEY (id),\n" +
-            ");" +
-            "CREATE INDEX countyLongitudeIdx ON county (longitude);\n " +
-            "CREATE INDEX countyLatitudeIdx ON county (latitude);\n " +
-            "CREATE INDEX countyStateIdIdx ON county (stateId);\n " +
-            "CREATE INDEX countyCountryIdIdx ON county (countryId);\n " +
-            "CREATE INDEX countyWikiIdx ON county (wikiId);\n " +
-            "CREATE INDEX countyLabelIdx ON county (label);\n";
-
-    private static final String CREATE_STATE = "CREATE TABLE IF NOT EXISTS state\n" +
-            "(\n" +
-            "    id VARCHAR(255) DEFAULT NOT NULL,\n" +
-            "    label VARCHAR(255) DEFAULT NULL,\n" +
-            "    wikiId VARCHAR(255) DEFAULT NULL,\n" +
-            "    longitude DOUBLE NOT NULL,\n" +
-            "    latitude DOUBLE NOT NULL,\n" +
-            "    population BIGINT DEFAULT NULL,\n" +
-            "    countryId VARCHAR(255) DEFAULT NULL,\n" +
-            "    PRIMARY KEY (id),\n" +
-            ");" +
-            "CREATE INDEX stateLongitudeIdx ON state (longitude);\n " +
-            "CREATE INDEX stateLatitudeIdx ON state (latitude);\n " +
-            "CREATE INDEX stateCountryIdIdx ON state (countryId);\n " +
-            "CREATE INDEX stateWikiIdx ON state (wikiId);\n" +
-            "CREATE INDEX stateLabelIdx ON state (label);\n ";
-
-    private static final String CREATE_COUNTRY = "CREATE TABLE IF NOT EXISTS country\n" +
-            "(\n" +
-            "    id VARCHAR(255) DEFAULT NOT NULL,\n" +
-            "    label VARCHAR(255) DEFAULT NULL,\n" +
-            "    wikiId VARCHAR(255) DEFAULT NULL,\n" +
-            "    longitude DOUBLE NOT NULL,\n" +
-            "    latitude DOUBLE NOT NULL,\n" +
-            "    population BIGINT DEFAULT NULL,\n" +
-            "    PRIMARY KEY (id),\n" +
+            "    PRIMARY KEY (id)\n" +
             ");\n" +
-            "CREATE INDEX countryLongitudeIdx ON country (longitude);\n " +
-            "CREATE INDEX countryLatitudeIdx ON country (latitude);\n " +
-            "CREATE INDEX countryWikiIdx ON country (wikiId);\n" +
-            "CREATE INDEX countryLabelIdx ON country (label);\n ";
+            "CREATE INDEX placeWikiIdx ON place (wikiId);\n" +
+            "CREATE INDEX placeLabelIdx ON place (label);\n ";
+
+    private static final String CREATE_RELATIONSHIPS = "CREATE TABLE IF NOT EXISTS relationship_hierarchy\n" +
+            "(\n" +
+            "    childId VARCHAR(255) DEFAULT NOT NULL,\n" +
+            "    parentId VARCHAR(255) DEFAULT NULL,\n" +
+            "    PRIMARY KEY (childId, parentId)\n" +
+            ");\n";
 
     private static final String CREATE_HEALTH_RECORDS = "CREATE TABLE IF NOT EXISTS health_records\n" +
             "(\n" +
             "    id UUID NOT NULL,\n" +
             "    label VARCHAR(255) NOT NULL,\n" +
             "    referenceDate TIMESTAMP NOT NULL,\n" +
-            "    countyId VARCHAR(255) DEFAULT NULL,\n" +
-            "    stateId VARCHAR(255) DEFAULT NULL,\n" +
-            "    countryId VARCHAR(255) DEFAULT NULL,\n" +
+            "    regionId VARCHAR(255) DEFAULT NULL,\n" +
             "    longitude DOUBLE NOT NULL,\n" +
             "    latitude DOUBLE NOT NULL,\n" +
             "    wikiId VARCHAR(255) DEFAULT NULL,\n" +
@@ -136,15 +104,12 @@ public class DatabaseBuilder {
             "    totalTestedCases BIGINT DEFAULT NULL,\n" +
             "    numActiveCases BIGINT DEFAULT NULL,\n" +
             "    numDeaths BIGINT DEFAULT NULL,\n" +
-            "    numPendingTests BIGINT DEFAULT NULL,\n" +
             "    numRecoveredCases BIGINT DEFAULT NULL,\n" +
             "    numTested BIGINT DEFAULT NULL,\n" +
-            "    PRIMARY KEY (id),\n" +
+            "    PRIMARY KEY (id)\n" +
             ");\n" +
-            "CREATE INDEX healthRecordsCountyIdIdx ON health_records (countyId);\n" +
-            "CREATE INDEX healthRecordsStateIdIdx ON health_records (stateId);\n" +
-            "CREATE INDEX healthRecordsDateIdIdx ON health_records (referenceDate);\n" +
-            "CREATE INDEX healthRecordsCountryIdIdx ON health_records (countryId);";
+            "CREATE INDEX healthRecordsRegionIdIdx ON health_records (regionId);\n" +
+            "CREATE INDEX healthRecordsDateIdIdx ON health_records (referenceDate);";
 
 
     private static final String CREATE_LATEST_HEALTH_RECORDS = "CREATE TABLE IF NOT EXISTS latest_health_records\n" +
@@ -152,9 +117,7 @@ public class DatabaseBuilder {
             "    id UUID NOT NULL,\n" +
             "    label VARCHAR(255) NOT NULL,\n" +
             "    referenceDate TIMESTAMP NOT NULL,\n" +
-            "    countyId VARCHAR(255) DEFAULT NULL,\n" +
-            "    stateId VARCHAR(255) DEFAULT NULL,\n" +
-            "    countryId VARCHAR(255) DEFAULT NULL,\n" +
+            "    regionId VARCHAR(255) DEFAULT NULL,\n" +
             "    longitude DOUBLE NOT NULL,\n" +
             "    latitude DOUBLE NOT NULL,\n" +
             "    wikiId VARCHAR(255) DEFAULT NULL,\n" +
@@ -165,14 +128,11 @@ public class DatabaseBuilder {
             "    totalTestedCases BIGINT DEFAULT NULL,\n" +
             "    numActiveCases BIGINT DEFAULT NULL,\n" +
             "    numDeaths BIGINT DEFAULT NULL,\n" +
-            "    numPendingTests BIGINT DEFAULT NULL,\n" +
             "    numRecoveredCases BIGINT DEFAULT NULL,\n" +
             "    numTested BIGINT DEFAULT NULL,\n" +
-            "    PRIMARY KEY (id),\n" +
+            "    PRIMARY KEY (id)\n" +
             ");\n" +
-            "CREATE INDEX healthRecordsLatestCountyIdIdx ON latest_health_records (countyId);\n" +
-            "CREATE INDEX healthRecordsLatestStateIdIdx ON latest_health_records (stateId);\n" +
-            "CREATE INDEX healthRecordsLatestCountryIdIdx ON latest_health_records (countryId);";
+            "CREATE INDEX latestHealthRecordsRegionIdIdx ON latest_health_records (regionId);";
 
     private static final String CREATE_METADATA = "CREATE TABLE IF NOT EXISTS metadata\n" +
             "(\n" +
@@ -192,6 +152,7 @@ public class DatabaseBuilder {
     private long totalInputRecords = 0;
     private long totalDuplicateRecords = 0;
     private final double invalid_threshold;
+    private final boolean failOnThresholdError;
     private Date lastModifiedDate = new Date();
 
     public class DBConnector implements Closeable {
@@ -264,11 +225,12 @@ public class DatabaseBuilder {
         }
     }
 
-    public DatabaseBuilder(File outputDirectory, double invalid_threshold) {
+    public DatabaseBuilder(File outputDirectory, double invalid_threshold, boolean failOnThresholdError) {
         this.outputDirectory = outputDirectory;
         insertables = new ArrayList<>();
         gson = new GsonBuilder().registerTypeAdapter(Date.class, new GsonUTCDateAdapter()).create();
         this.invalid_threshold = invalid_threshold;
+        this.failOnThresholdError = failOnThresholdError;
     }
 
     public void setLastModifiedDate(Date lastModifiedDate) {
@@ -327,9 +289,8 @@ public class DatabaseBuilder {
     }
 
     public void createTables(DBConnector connector) throws SQLException {
-        connector.executeSQLQuery(CREATE_COUNTRY);
-        connector.executeSQLQuery(CREATE_STATE);
-        connector.executeSQLQuery(CREATE_COUNTY);
+        connector.executeSQLQuery(CREATE_PLACE);
+        connector.executeSQLQuery(CREATE_RELATIONSHIPS);
         connector.executeSQLQuery(CREATE_HEALTH_RECORDS);
         connector.executeSQLQuery(CREATE_LATEST_HEALTH_RECORDS);
         connector.executeSQLQuery(CREATE_METADATA);
@@ -341,7 +302,8 @@ public class DatabaseBuilder {
 
     private void buildForeignKeyValidatorMap() {
         foreignKeyMap = insertables.stream()
-                .filter(insertable -> JoinTableNames.contains(insertable.getTableName()))
+                .filter(insertable -> insertable.getTableName().equals(Places.TABLE_NAME)
+                        && insertable.getId() != null)
                 .collect(Collectors.toMap(
                         insertable -> insertable.getId().toString(),
                         insertable -> insertable,
@@ -385,8 +347,10 @@ public class DatabaseBuilder {
             createTables(connector);
 
             for (Insertable toInsert : filteredInsertables) {
-                try(PreparedStatement insertStatement = toInsert.getStatement(connector)) {
-                    connector.executePreparedStatement(insertStatement);
+                for (PreparedStatement insertStatement : toInsert.getStatement(connector)) {
+                    try(PreparedStatement closableStatement = insertStatement) {
+                        connector.executePreparedStatement(closableStatement);
+                    }
                 }
             }
         } catch (Exception e) {
@@ -398,7 +362,7 @@ public class DatabaseBuilder {
         double totalDbRecords = 0;
         double invalid_perc = 100;
         try (DBConnector dbConnector = newDBConnector()) {
-            for (String tableName : Arrays.<String>asList("health_records","latest_health_records", "country", "state", "county")) {
+            for (String tableName : Arrays.<String>asList("health_records","latest_health_records", "place")) {
                 int rowCount = (int) dbConnector.executeSQLQuery("SELECT COUNT(*) FROM " + tableName + ";",
                         resultSet -> {
                             try {
@@ -431,7 +395,8 @@ public class DatabaseBuilder {
         log.debug(String.format("Total valid record in db = %g", totalDbRecords));
         log.debug(String.format("Percentage of Invalid Records is %g%%", invalid_perc));
 
-        if (totalInputRecords == 0 || invalid_perc >= invalid_threshold) {
+        if (failOnThresholdError &&
+                (totalInputRecords == 0 || invalid_perc >= invalid_threshold)) {
             throw new IllegalStateException(
                     String.format(
                             "Percentage of Invalid Record %g did not meet the threshold %g",
@@ -461,6 +426,8 @@ public class DatabaseBuilder {
                     "Database Schema Version");
             options.addOption("p", "invalid-perc-threshold", true,
                     "Precentage of invalid rows allowed in input");
+            options.addOption("f", "fail-on-threshold-error", true,
+                    "Flag to enable build failure on threshold error.");
             CommandLineParser parser = new DefaultParser();
             CommandLine commandLine = parser.parse(options, args);
 
@@ -475,13 +442,14 @@ public class DatabaseBuilder {
             String downloadDataFromRepo = commandLine.getOptionValue("download-data-from-repo");
             String githubUsername = commandLine.getOptionValue("github-username");
             String githubAccessToken = commandLine.getOptionValue("github-accesstoken");
-            double invalid_threshold = commandLine.hasOption("invalid-perc-threshold")
+            double invalidThreshold = commandLine.hasOption("invalid-perc-threshold")
                     ? Double.valueOf(commandLine.getOptionValue("invalid-perc-threshold"))
                     : 1;
+            Boolean failOnThresholdError = Boolean.parseBoolean(commandLine.getOptionValue("fail-on-threshold-error"));
 
             log.info("Processing data from {} and writing to {}", githubTarballDownloadUrl, outputDirectory);
 
-            DatabaseBuilder databaseBuilder = new DatabaseBuilder(new File(outputDirectory), invalid_threshold);
+            DatabaseBuilder databaseBuilder = new DatabaseBuilder(new File(outputDirectory), invalidThreshold, failOnThresholdError);
             DataFetcher dataFetcher;
             if ("true".equals(downloadDataFromRepo)) {
                 log.info("Using data from github: {}", githubTarballDownloadUrl);

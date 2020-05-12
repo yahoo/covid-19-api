@@ -15,6 +15,7 @@ import java.sql.Timestamp;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.text.ParseException;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -64,7 +65,7 @@ public class Metadata implements Insertable {
     }
 
     @Override
-    public PreparedStatement getStatement(DatabaseBuilder.DBConnector connector) throws SQLException {
+    public List<PreparedStatement> getStatement(DatabaseBuilder.DBConnector connector) throws SQLException {
         java.util.Date startDate = null;
         java.util.Date endDate = null;
         try {
@@ -78,7 +79,7 @@ public class Metadata implements Insertable {
         statement.setString(2, DatabaseBuilder.DB_DATE_FORMAT.format(startDate));
         statement.setString(3, DatabaseBuilder.DB_DATE_FORMAT.format(endDate));
         statement.setTimestamp(4, publishedDate);
-        return statement;
+        return Arrays.asList(statement);
     }
 
     @Override

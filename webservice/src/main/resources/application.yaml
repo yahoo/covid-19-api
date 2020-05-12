@@ -77,41 +77,6 @@ security:
     enabled: true
     duration: 3600
   whiteList:
-    ruleState: on
+    ruleState: warn
     uri:
-      - /api/json/v1/counties?fields[counties]={{FIELD_ATTRIBUTES}}&fields[states]={{FIELD_ATTRIBUTES}}&fields[countries]={{FIELD_ATTRIBUTES}}&filter=id=={{ALPHA_NUMERIC}}&include=state,state.country{{PAGINATION}}
-      - /api/json/v1/counties?fields[counties]={{FIELD_ATTRIBUTES}}&fields[states]={{FIELD_ATTRIBUTES}}&fields[countries]={{FIELD_ATTRIBUTES}}&filter=wikiId=={{TYPE_AHEAD_CHARACTERS}}&include=state,state.country{{PAGINATION}}
-      - /api/json/v1/counties?fields[counties]={{FIELD_ATTRIBUTES}}&filter=label=={{TYPE_AHEAD_CHARACTERS}}{{PAGINATION}}
-      - /api/json/v1/countries?fields[countries]={{FIELD_ATTRIBUTES}}&filter=id=={{ALPHA_NUMERIC}}{{PAGINATION}}
-      - /api/json/v1/countries?fields[countries]={{FIELD_ATTRIBUTES}}&filter=label=={{TYPE_AHEAD_CHARACTERS}}{{PAGINATION}}
-      - /api/json/v1/countries?fields[countries]={{FIELD_ATTRIBUTES}}states&filter=wikiId=={{TYPE_AHEAD_CHARACTERS}}{{PAGINATION}}
-      - /api/json/v1/healthRecords?fields[healthRecords]={{FIELD_ATTRIBUTES}}&filter=counties.id=={{ALPHA_NUMERIC}};referenceDate=in=({{DATE_LIST}}){{PAGINATION}}
-      - /api/json/v1/healthRecords?fields[healthRecords]={{FIELD_ATTRIBUTES}}&filter=country.id=={{ALPHA_NUMERIC}};referenceDate=in=({{DATE_LIST}});state=isnull=true;county=isnull=true{{PAGINATION}}
-      - /api/json/v1/healthRecords?fields[healthRecords]={{FIELD_ATTRIBUTES}}&filter=country.wikiId=={{TYPE_AHEAD_CHARACTERS}};referenceDate=in=({{DATE_LIST}});county=isnull=true;state=isnull=false&sort=-totalConfirmedCases{{PAGINATION}}
-      - /api/json/v1/healthRecords?fields[healthRecords]={{FIELD_ATTRIBUTES}}&filter=referenceDate=={{DATE}};county=isnull=true;state=isnull=false{{PAGINATION}}
-      - /api/json/v1/healthRecords?fields[healthRecords]={{FIELD_ATTRIBUTES}}&filter=referenceDate=={{DATE}};county=isnull=true;state=isnull=true;country=isnull=false{{PAGINATION}}
-      - /api/json/v1/healthRecords?fields[healthRecords]={{FIELD_ATTRIBUTES}}&filter=referenceDate=in=({{DATE_LIST}});country=isnull=true;state=isnull=true;county=isnull=true{{PAGINATION}}
-      - /api/json/v1/healthRecords?fields[healthRecords]={{FIELD_ATTRIBUTES}}&filter=referenceDate=in=({{DATE_LIST}});county=isnull=true;state=isnull=true;country=isnull=false&sort=-totalConfirmedCases{{PAGINATION}}
-      - /api/json/v1/healthRecords?fields[healthRecords]={{FIELD_ATTRIBUTES}}&filter=state.id=={{ALPHA_NUMERIC}};referenceDate=in=({{DATE_LIST}});county=isnull=true{{PAGINATION}}
-      - /api/json/v1/healthRecords?fields[healthRecords]={{FIELD_ATTRIBUTES}}&filter=state.wikiId=={{TYPE_AHEAD_CHARACTERS}};referenceDate=in=({{DATE_LIST}});county=isnull=false&sort=-totalConfirmedCases{{PAGINATION}}
-      - /api/json/v1/healthRecords?fields[healthRecords]={{FIELD_ATTRIBUTES}}&filter=wikiId=={{TYPE_AHEAD_CHARACTERS}};referenceDate=in=({{DATE_LIST}}){{PAGINATION}}
-      - /api/json/v1/healthRecords?fields[healthRecords]={{FIELD_ATTRIBUTES}}country&fields[countries]={{FIELD_ATTRIBUTES}}&filter=referenceDate=in=({{DATE_LIST}});country=isnull=false{{PAGINATION}}
-      - /api/json/v1/healthRecords?fields[healthRecords]={{FIELD_ATTRIBUTES}}country&filter=referenceDate=={{DATE}};county=isnull=true;state=isnull=false{{PAGINATION}}
-      - /api/json/v1/healthRecords?fields[healthRecords]={{FIELD_ATTRIBUTES}}country&filter=referenceDate=={{DATE}};county=isnull=true;state=isnull=true;country=isnull=false{{PAGINATION}}
-      - /api/json/v1/healthRecords?fields[healthRecords]={{FIELD_ATTRIBUTES}}country,label&filter=referenceDate=in=({{DATE_LIST}});county=isnull=true;state=isnull=true;country=isnull=false&sort=-totalConfirmedCases{{PAGINATION}}
-      - /api/json/v1/healthRecords?fields[healthRecords]={{FIELD_ATTRIBUTES}}county&fields[counties]={{FIELD_ATTRIBUTES}}&filter=referenceDate=in=({{DATE_LIST}});county=isnull=false{{PAGINATION}}
-      - /api/json/v1/healthRecords?fields[healthRecords]={{FIELD_ATTRIBUTES}}county,label&filter=state.id=={{ALPHA_NUMERIC}};referenceDate=in=({{DATE_LIST}});county=isnull=false&sort=-totalConfirmedCases{{PAGINATION}}
-      - /api/json/v1/healthRecords?fields[healthRecords]={{FIELD_ATTRIBUTES}}state&fields[states]={{FIELD_ATTRIBUTES}}&filter=referenceDate=in=({{DATE_LIST}});state=isnull=false{{PAGINATION}}
-      - /api/json/v1/healthRecords?fields[healthRecords]={{FIELD_ATTRIBUTES}}state&filter=referenceDate=={{DATE}};state.id=={{ALPHA_NUMERIC}};county=isnull=false&include=state{{PAGINATION}}
-      - /api/json/v1/healthRecords?fields[healthRecords]={{FIELD_ATTRIBUTES}}state,label&filter=country.id=={{ALPHA_NUMERIC}};referenceDate=in=({{DATE_LIST}});county=isnull=true;state=isnull=false&sort=-totalConfirmedCases{{PAGINATION}}
-      - /api/json/v1/latestHealthRecords?fields[latestHealthRecords]={{FIELD_ATTRIBUTES}}&filter=country.wikiId=={{TYPE_AHEAD_CHARACTERS}};county=isnull=true;state=isnull=false&sort=-totalConfirmedCases{{PAGINATION}}
-      - /api/json/v1/latestHealthRecords?fields[latestHealthRecords]={{FIELD_ATTRIBUTES}}&filter=county=isnull=true;state=isnull=true;country=isnull=false&sort=-totalConfirmedCases{{PAGINATION}}
-      - /api/json/v1/latestHealthRecords?fields[latestHealthRecords]={{FIELD_ATTRIBUTES}}&filter=state.wikiId=={{TYPE_AHEAD_CHARACTERS}};county=isnull=false&sort=-totalConfirmedCases{{PAGINATION}}
-      - /api/json/v1/latestHealthRecords?fields[latestHealthRecords]={{FIELD_ATTRIBUTES}}&filter=wikiId=={{TYPE_AHEAD_CHARACTERS}}{{PAGINATION}}
-      - /api/json/v1/latestHealthRecords?fields[latestHealthRecords]={{FIELD_ATTRIBUTES}}country&filter=county=isnull=true;state=isnull=false{{PAGINATION}}
-      - /api/json/v1/latestHealthRecords?fields[latestHealthRecords]={{FIELD_ATTRIBUTES}}country&filter=county=isnull=true;state=isnull=true;country=isnull=false{{PAGINATION}}
-      - /api/json/v1/latestHealthRecords?fields[latestHealthRecords]={{FIELD_ATTRIBUTES}}state&filter=state.id=={{ALPHA_NUMERIC}};county=isnull=false&include=state{{PAGINATION}}
       - /api/json/v1/metadata?{{PAGINATION}}
-      - /api/json/v1/states?fields[states]={{FIELD_ATTRIBUTES}}&fields[countries]={{FIELD_ATTRIBUTES}}&filter=id=={{ALPHA_NUMERIC}}&include=country{{PAGINATION}}
-      - /api/json/v1/states?fields[states]={{FIELD_ATTRIBUTES}}&filter=label=={{TYPE_AHEAD_CHARACTERS}}{{PAGINATION}}
-      - /api/json/v1/states?fields[states]={{FIELD_ATTRIBUTES}}counties&fields[countries]={{FIELD_ATTRIBUTES}}&filter=wikiId=={{TYPE_AHEAD_CHARACTERS}}&include=country{{PAGINATION}}

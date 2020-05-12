@@ -7,12 +7,10 @@
 package com.yahoo.covid19;
 
 import com.yahoo.covid19.database.DBUtils;
-import com.yahoo.covid19.models.Country;
-import com.yahoo.covid19.models.County;
 import com.yahoo.covid19.models.HealthRecords;
 import com.yahoo.covid19.models.LatestHealthRecords;
 import com.yahoo.covid19.models.Metadata;
-import com.yahoo.covid19.models.State;
+import com.yahoo.covid19.models.Place;
 import com.yahoo.elide.standalone.PersistenceUnitInfoImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.jpa.boot.internal.EntityManagerFactoryBuilderImpl;
@@ -44,9 +42,7 @@ public class EntityManagerSupplier implements Supplier<EntityManager>  {
 
     public static EntityManagerFactory buildEntityManagerFactory(File dbLocation) {
         List<String> classNames = new ArrayList<>();
-        classNames.add(Country.class.getName());
-        classNames.add(County.class.getName());
-        classNames.add(State.class.getName());
+        classNames.add(Place.class.getName());
         classNames.add(HealthRecords.class.getName());
         classNames.add(LatestHealthRecords.class.getName());
         classNames.add(Metadata.class.getName());

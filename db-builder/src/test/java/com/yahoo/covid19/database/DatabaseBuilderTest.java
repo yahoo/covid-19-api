@@ -25,9 +25,16 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class DatabaseBuilderTest {
     private DatabaseBuilder builder;
 
+    private void countCheck(DatabaseBuilder.DBConnector connector, String table, Integer expected) throws SQLException {
+        countCheck(connector, table, null, null, expected);
+    }
     private void countCheck(DatabaseBuilder.DBConnector connector, String table, String where, Integer expected) throws SQLException {
+        countCheck(connector, table, null, where, expected);
+    }
+    private void countCheck(DatabaseBuilder.DBConnector connector, String table, String join, String where, Integer expected) throws SQLException {
         String whereClause = where == null || where.isEmpty() ? "" : " WHERE " + where;
-        int rowCount = (int) connector.executeSQLQuery("SELECT COUNT(*) FROM " + table + whereClause + ";",
+        String joinClause = join == null ? "" : " " + join;
+        int rowCount = (int) connector.executeSQLQuery("SELECT COUNT(*) FROM " + table + joinClause + whereClause + ";",
                 resultSet -> {
                     try {
                         return resultSet.last() ? resultSet.getInt(1) : -1;
@@ -48,9 +55,9 @@ public class DatabaseBuilderTest {
     public void setup() throws FileNotFoundException, URISyntaxException {
         File outputDirectory = Files.createTempDir();
         outputDirectory.deleteOnExit();
-        builder = new DatabaseBuilder(outputDirectory, 10.0);
+        builder = new DatabaseBuilder(outputDirectory, 10.0, true);
         addInputStrem("/data/metadata/region-metadata.json", builder);
-        addInputStrem("/data/by-region-2020-04-03.json", builder);
+        addInputStrem("/data/by-region-2020-04-24.json", builder);
         builder.build();
     }
 
@@ -58,11 +65,17 @@ public class DatabaseBuilderTest {
     @Test
     public void test() throws Exception {
         try (DatabaseBuilder.DBConnector connector = builder.newDBConnector()) {
-            countCheck(connector, "health_records", null, 2743);
+            countCheck(connector, "health_records", null, 3489);
             countCheck(connector, "health_records", "label = 'Earth'", 1);
-            countCheck(connector, "country", null,204);
-            countCheck(connector, "state", null,232);
-            countCheck(connector, "county", null,3137);
+            countCheck(connector, "health_records",
+                    "LEFT JOIN relationship_hierarchy ON relationship_hierarchy.childId = health_records.regionId",
+                    "health_records.label = 'Earth' AND relationship_hierarchy.parentId IS NULL", 1);
+
+            countCheck(connector, "place", null,3801);
+            countCheck(connector, "place", "label = 'Earth'", 1);
+            countCheck(connector, "place",
+                    "LEFT JOIN relationship_hierarchy ON relationship_hierarchy.childId = place.id",
+                    "place.label = 'Earth' AND relationship_hierarchy.parentId IS NULL", 1);
         }
     }
 
@@ -70,9 +83,12 @@ public class DatabaseBuilderTest {
     @Test
     public void testInvalidEntries() throws Exception {
         try (DatabaseBuilder.DBConnector connector = builder.newDBConnector()) {
-            countCheck(connector, "health_records", "label != 'Earth' AND countryId IS NULL", 0);
-            countCheck(connector, "state", "countryId IS NULL",0);
-            countCheck(connector, "county", "stateId IS NULL OR countryId IS NULL",0);
+            countCheck(connector, "health_records",
+                    "LEFT JOIN relationship_hierarchy ON relationship_hierarchy.childId = health_records.regionId",
+                    "health_records.label != 'Earth' AND relationship_hierarchy.parentId IS NULL", 0);
+            countCheck(connector, "place",
+                    "LEFT JOIN relationship_hierarchy ON relationship_hierarchy.childId = place.id",
+                    "place.label != 'Earth' AND relationship_hierarchy.parentId IS NULL", 0);
         }
     }
 
@@ -89,8 +105,12 @@ public class DatabaseBuilderTest {
                         }
                     }
             );
-            // 22 configured indexes and 5 primary keys
-            assertEquals(27, rowCount);
+            // 5 configured indexes
+            // 1 primary key index for healthRecords
+            // 1 primary key index for latestHealthRecords
+            // 1 primary key index for places
+            // 2 primary key index for relationship_hierarchy
+            assertEquals(10, rowCount);
         }
     }
 }

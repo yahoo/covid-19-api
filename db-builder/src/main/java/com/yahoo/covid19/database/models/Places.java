@@ -8,8 +8,6 @@ package com.yahoo.covid19.database.models;
 
 import com.yahoo.covid19.database.DatabaseBuilder;
 import com.yahoo.covid19.database.ErrorCodes;
-import com.yahoo.covid19.database.JoinTableNames;
-import com.yahoo.covid19.database.gsonAdapters.TableNameAdapter;
 
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
@@ -17,6 +15,10 @@ import lombok.extern.slf4j.Slf4j;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 import static com.yahoo.covid19.database.ErrorCodes.DANGLING_FOREIGN_KEY;
@@ -26,7 +28,7 @@ import static com.yahoo.covid19.database.ErrorCodes.INVALID_TYPE;
 import static com.yahoo.covid19.database.ErrorCodes.MISSING_FOREIGN_KEY;
 import static com.yahoo.covid19.database.ErrorCodes.OK;
 
-import com.google.gson.annotations.JsonAdapter;
+import com.google.gson.annotations.SerializedName;
 
 /**
  * Used to slurp County records from Yahoo Knowledge Graph.
@@ -34,98 +36,124 @@ import com.google.gson.annotations.JsonAdapter;
 @Slf4j
 @Data
 public class Places implements Insertable {
+    public static final String TABLE_NAME = "places";
+    private static final String SUPERNAME = "Supername";
+    private static final List<String> PLACE_TYPE_ORDER = Arrays.asList(
+            "Supername", "Country", "StateAdminArea", "CountyAdminArea", "CityTown", "Island", "Place"
+    );
     private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-    private static final String COUNTY_INSERT_STATEMENT = "INSERT INTO county ("
-                + "id, label, wikiId, longitude, "
-                + "latitude, population, stateId, countryId) "
-                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?);";
+    private static final String PLACE_INSERT_STATEMENT = "INSERT INTO place ("
+                + "id, type, label, wikiId, longitude, "
+                + "latitude, population) "
+                + "VALUES (?, ?, ?, ?, ?, ?, ?);";
 
-    private static final String STATE_INSERT_STATEMENT = "INSERT INTO state ("
-            + "id, label, wikiId, longitude, "
-            + "latitude, population, countryId) "
-            + "VALUES (?, ?, ?, ?, ?, ?, ?);";
-
-    private static final String COUNTRY_INSERT_STATEMENT = "INSERT INTO country ("
-            + "id, label, wikiId, longitude, "
-            + "latitude, population) "
-            + "VALUES (?, ?, ?, ?, ?, ?);";
+    private static final String RELATIONSHIP_INSERT_STATEMENT = "INSERT INTO relationship_hierarchy ("
+            + "childId, parentId) "
+            + "VALUES (?, ?);";
 
     private final String id;
+    private final List<String> type;
     private final String label;
     private final String wikiId;
     private final String longitude;
     private final String latitude;
     private final String population;
-    private final String stateId;
-    private final String countryId;
-
-    @JsonAdapter(TableNameAdapter.class)
-    private final JoinTableNames type;
+    @SerializedName(value = "parentId")
+    private final List<String> parentIds;
 
     private transient ErrorCodes errorCode = OK;
 
 
-    private PreparedStatement getCommonStatement(DatabaseBuilder.DBConnector connector, String insert_template) throws SQLException {
-        PreparedStatement statement = connector.getPreparedStatement(insert_template);
+    private PreparedStatement getCommonStatement(DatabaseBuilder.DBConnector connector) throws SQLException {
+
+        Collections.sort(type, (String str1, String str2) -> {
+            int index1 = PLACE_TYPE_ORDER.indexOf(str1);
+            int index2 = PLACE_TYPE_ORDER.indexOf(str2);
+            if (index1 == -1 && index2 == -1) {
+                return str1.compareTo(str2);
+            }
+            // Types not found in the type order list should be placed at the end.
+            index1 = index1 == -1 ? PLACE_TYPE_ORDER.size() : index1;
+            index2 = index2 == -1 ? PLACE_TYPE_ORDER.size() : index2;
+
+            return index1 - index2;
+        });
+
+        PreparedStatement statement = connector.getPreparedStatement(PLACE_INSERT_STATEMENT);
         statement.setString(1, id);
-        statement.setString(2, label);
-        statement.setString(3, wikiId);
-        statement.setDouble(4, (longitude == null) ? 0 : Double.valueOf(longitude));
-        statement.setDouble(5, (latitude == null) ? 0 : Double.valueOf(latitude));
-        statement.setObject(6, population == null ? null : Long.valueOf(population));
+        statement.setString(2, String.join(",", type));
+        statement.setString(3, label);
+        statement.setString(4, wikiId);
+        statement.setDouble(5, (longitude == null) ? 0 : Double.valueOf(longitude));
+        statement.setDouble(6, (latitude == null) ? 0 : Double.valueOf(latitude));
+        statement.setObject(7, population == null ? null : Long.valueOf(population));
+        return statement;
+    }
+
+    private PreparedStatement getRelationshipStatement(DatabaseBuilder.DBConnector connector, String parentId) throws SQLException {
+
+
+        PreparedStatement statement = connector.getPreparedStatement(RELATIONSHIP_INSERT_STATEMENT);
+        statement.setString(1, id);
+        statement.setString(2, parentId);
         return statement;
     }
 
     @Override
-    public PreparedStatement getStatement(DatabaseBuilder.DBConnector connector) throws SQLException {
-        PreparedStatement statement;
-        switch (type) {
-            case Country:
-            case Supername:
-                statement = getCommonStatement(connector, COUNTRY_INSERT_STATEMENT);
-                break;
-            case StateAdminArea:
-                statement = getCommonStatement(connector, STATE_INSERT_STATEMENT);
-                statement.setString(7, countryId);
-                break;
-            case CountyAdminArea:
-                statement = getCommonStatement(connector, COUNTY_INSERT_STATEMENT);
-                statement.setString(7, stateId);
-                statement.setString(8, countryId);
-                break;
-            default:
-                throw new IllegalStateException("invalid geographical type: " + type);
+    public List<PreparedStatement> getStatement(DatabaseBuilder.DBConnector connector) throws SQLException {
+        List<PreparedStatement> statements = new ArrayList<>();
+        statements.add(getCommonStatement(connector));
+
+        for (String parentId : parentIds) {
+            statements.add(getRelationshipStatement(connector, parentId));
         }
 
-        return statement;
+        return statements;
     }
 
     @Override
     public boolean isValid(Map<String, Insertable> foreignKeyMap) {
-        if (id == null || id.isEmpty() || type == null) {
-            if (type == null) {
-                errorCode = INVALID_TYPE;
-            } else {
-                errorCode = INVALID_ID;
-            }
+        if (id == null || id.isEmpty()) {
+            errorCode = INVALID_ID;
             return false;
         }
 
-        switch (type) {
-            case StateAdminArea:
-                return validateState(foreignKeyMap);
-            case CountyAdminArea:
-                return validateCounty(foreignKeyMap);
-            case Country:
-                return validateCountry(foreignKeyMap);
-            case Supername:
-                return validateEarth(foreignKeyMap);
-            default:
-                return false;
+        if (this.type == null || this.type.isEmpty()) {
+            errorCode = INVALID_TYPE;
+            return false;
         }
+
+        if (this.type.contains(SUPERNAME)) {
+            return true;
+        }
+
+        if (! isValidCoordinate(latitude) || ! isValidCoordinate(longitude)) {
+            errorCode = INVALID_COORDINATE;
+            return false;
+        }
+
+        if (parentIds == null || parentIds.isEmpty()) {
+            errorCode = MISSING_FOREIGN_KEY;
+            return false;
+        }
+        boolean isParentValid =  parentIds.stream()
+                .map(parentId -> foreignKeyMap.get(parentId))
+                .allMatch(
+                        insertable -> {
+                            if (insertable == null || !insertable.isValid(foreignKeyMap)) {
+                                return false;
+                            }
+                            return true;
+                        }
+                );
+        if (!isParentValid) {
+            this.errorCode = DANGLING_FOREIGN_KEY;
+            return false;
+        }
+        return true;
     }
 
-    public boolean isValidCoordinate(String coordinate) {
+    private boolean isValidCoordinate(String coordinate) {
         if (coordinate == null) {
             errorCode = INVALID_COORDINATE;
             return false;
@@ -140,61 +168,6 @@ public class Places implements Insertable {
         return true;
     }
 
-    public boolean validateState(Map<String, Insertable> foreignKeyMap) {
-        if (! isValidCoordinate(latitude) || ! isValidCoordinate(longitude)) {
-            errorCode = INVALID_COORDINATE;
-            return false;
-        }
-
-        if (countryId == null || countryId.isEmpty()) {
-            errorCode = MISSING_FOREIGN_KEY;
-            return false;
-        }
-        Places country = (Places) foreignKeyMap.get(countryId);
-        if (country == null || !country.validateCountry(foreignKeyMap)) {
-            errorCode = DANGLING_FOREIGN_KEY;
-            return false;
-        }
-
-        return true;
-    }
-
-    public boolean validateCounty(Map<String, Insertable> foreignKeyMap) {
-        if (! isValidCoordinate(latitude) || ! isValidCoordinate(longitude)) {
-            errorCode = INVALID_COORDINATE;
-            return false;
-        }
-
-        if (countryId == null || countryId.isEmpty() || stateId == null || stateId.isEmpty()) {
-            errorCode = MISSING_FOREIGN_KEY;
-            return false;
-        }
-        Places state = (Places) foreignKeyMap.get(stateId);
-        if (state == null || !state.validateState(foreignKeyMap)) {
-            errorCode = DANGLING_FOREIGN_KEY;
-            return false;
-        }
-
-        Places country = (Places) foreignKeyMap.get(countryId);
-        if (country == null || !country.validateCountry(foreignKeyMap)) {
-            errorCode = DANGLING_FOREIGN_KEY;
-            return false;
-        }
-
-        return true;
-    }
-
-    public boolean validateCountry(Map<String, Insertable> foreignKeyMap) {
-        if (!isValidCoordinate(latitude) || !isValidCoordinate(longitude)) {
-            errorCode = INVALID_COORDINATE;
-            return false;
-        }
-        return true;
-    }
-
-    public boolean validateEarth(Map<String, Insertable> foreignKeyMap) {
-        return true;
-    }
 
     @Override
     public Object getId() {
@@ -203,7 +176,7 @@ public class Places implements Insertable {
 
     @Override
     public String getTableName() {
-        return type == null ? "" : type.name();
+        return TABLE_NAME;
     }
 
     @Override
