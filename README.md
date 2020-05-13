@@ -60,46 +60,43 @@ Here is the server response:
 {
     "data": [
         {
+            "type": "healthRecords",
+            "id": "58c73ef0-7547-3e38-b1e7-8d95354070c4",
             "attributes": {
-                "numActiveCases": 0,
-                "numDeaths": 0,
-                "numPendingTests": 0,
-                "numRecoveredCases": 0,
-                "numTested": 0,
-                "referenceDate": "2020-03-31T00:00Z",
-                "totalConfirmedCases": 188172,
-                "totalDeaths": 3873,
-                "totalRecoveredCases": 0,
-                "totalTestedCases": 0
+                "dataSource": "https://github.com/yahoo/covid-19-data/blob/master/data-sources.md",
+                "label": "Earth",
+                "latitude": 0,
+                "longitude": 0,
+                "numActiveCases": null,
+                "numDeaths": null,
+                "numRecoveredCases": null,
+                "numTested": null,
+                "referenceDate": "2020-05-13T00:00Z",
+                "totalConfirmedCases": 4205883,
+                "totalDeaths": 290296,
+                "totalRecoveredCases": null,
+                "totalTestedCases": null,
+                "wikiId": "Earth"
             },
-            "id": "6aa1fc99-a988-33f5-93ac-1d8fc859dc8d",
             "relationships": {
-                "country": {
+                "place": {
                     "data": {
-                        "id": "09d4bca31e2fd8b0f57f79f85ed42bd8",
-                        "type": "countries"
+                        "type": "places",
+                        "id": "Earth"
                     }
-                },
-                "county": {
-                    "data": null
-                },
-                "state": {
-                    "data": null
                 }
-            },
-            "type": "healthRecords"
+            }
         }
     ],
     "meta": {
         "page": {
-            "limit": 1,
             "number": 1,
-            "totalPages": 2,
-            "totalRecords": 2
+            "totalRecords": 65144,
+            "limit": 1,
+            "totalPages": 65144
         }
     }
 }
-
 ```
 
 ### Example GraphQL Request
@@ -170,6 +167,7 @@ The elide web service is a shared-nothing, read-only, scalable architecture wher
 ## Maintainers
 * [Jon Kilroy](https://www.linkedin.com/in/jon-kilroy-52545b4/)
 * [Aaron Klish](https://www.linkedin.com/in/aaron-klish-005927/)
+* [Chandrasekar Rajasekar](https://www.linkedin.com/in/chandrasekarrajasekar)
 
 Please contact yk-covid-19-os@verizonmedia.com with any questions.
 
