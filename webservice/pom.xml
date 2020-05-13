@@ -20,7 +20,7 @@
 
     <properties>
         <jar.finalName>covid-19-api</jar.finalName>
-        <elide.version>4.6.1</elide.version>
+        <elide.version>4.6.2</elide.version>
     </properties>
 
     <dependencies>
