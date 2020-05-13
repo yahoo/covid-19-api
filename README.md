@@ -18,6 +18,7 @@ The default landing page is `/api/index.html` which can switch between Swagger a
 ## Data Model
 
 The data model is evolving as more data becomes available worldwide.  The current model includes pre-aggregated health record data broken out by geography.  `LatestHealthRecords` is a snapshot of the latest records available for the current day.  `HealthRecords` includes records dated by publication date (there can be gaps if data was unavailable).  
+`Place` represents a geographical region in the map. `Place` has many to many relationships with itself to enable parent-child hierarchy. This allows Cities to have multiple Zip Codes (multiple parents in the hierarchy).
 
 ![Object UML](docs/data_model.png)
 

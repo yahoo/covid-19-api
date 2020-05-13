@@ -1,5 +1,6 @@
 @startuml
 
+
 class HealthRecords {
    id
    referenceDate
@@ -31,20 +32,17 @@ class Place {
    label
    latitude
    longitude
+   placeType
+   population
+   wikiId
+   --
+   -Set<Place> parents
+   -Set<Place> children
 }
 
-class County
-class State
-class Country
-
-Place <|-down- County
-Place <|-down- State
-Place <|-down- Country
-HealthRecords "*" *-up- "1" County
-HealthRecords "*" *-up- "1" State 
-HealthRecords "*" *-up- "1" Country 
-LatestHealthRecords "*" *-up- "1" County
-LatestHealthRecords "*" *-up- "1" State 
-LatestHealthRecords "*" *-up- "1" Country 
+Place "*" *-down- "*" Place: parents
+Place "*" *-up- "*" Place: children
+HealthRecords "*" *-up- "1" Place
+LatestHealthRecords "*" *-up- "1" Place
 
 @enduml
