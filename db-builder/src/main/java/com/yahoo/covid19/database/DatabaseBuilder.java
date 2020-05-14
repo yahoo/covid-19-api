@@ -355,14 +355,10 @@ public class DatabaseBuilder {
             createTables(connector);
 
             for (Insertable toInsert : filteredInsertables) {
-                try {
-                    for (PreparedStatement insertStatement : toInsert.getStatement(connector)) {
-                        try (PreparedStatement closableStatement = insertStatement) {
-                            connector.executePreparedStatement(closableStatement);
-                        }
+                for (PreparedStatement insertStatement : toInsert.getStatement(connector)) {
+                    try(PreparedStatement closableStatement = insertStatement) {
+                        connector.executePreparedStatement(closableStatement);
                     }
-                } catch (NumberFormatException e) {
-                    throw new NumberFormatException( e.getLocalizedMessage() + "\n" + toInsert);
                 }
             }
         } catch (Exception e) {
