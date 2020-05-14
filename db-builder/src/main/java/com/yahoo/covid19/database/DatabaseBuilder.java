@@ -102,10 +102,14 @@ public class DatabaseBuilder {
             "    totalConfirmedCases BIGINT DEFAULT NULL,\n" +
             "    totalRecoveredCases BIGINT DEFAULT NULL,\n" +
             "    totalTestedCases BIGINT DEFAULT NULL,\n" +
-            "    numActiveCases BIGINT DEFAULT NULL,\n" +
+            "    numPositiveTests BIGINT DEFAULT NULL,\n" +
             "    numDeaths BIGINT DEFAULT NULL,\n" +
             "    numRecoveredCases BIGINT DEFAULT NULL,\n" +
-            "    numTested BIGINT DEFAULT NULL,\n" +
+            "    diffNumPositiveTests BIGINT DEFAULT NULL,\n" +
+            "    diffNumDeaths BIGINT DEFAULT NULL,\n" +
+            "    avgWeeklyDeaths DOUBLE DEFAULT NULL,\n" +
+            "    avgWeeklyConfirmedCases DOUBLE DEFAULT NULL,\n" +
+            "    avgWeeklyRecoveredCases DOUBLE DEFAULT NULL,\n" +
             "    PRIMARY KEY (id)\n" +
             ");\n" +
             "CREATE INDEX healthRecordsRegionIdIdx ON health_records (regionId);\n" +
@@ -126,10 +130,14 @@ public class DatabaseBuilder {
             "    totalConfirmedCases BIGINT DEFAULT NULL,\n" +
             "    totalRecoveredCases BIGINT DEFAULT NULL,\n" +
             "    totalTestedCases BIGINT DEFAULT NULL,\n" +
-            "    numActiveCases BIGINT DEFAULT NULL,\n" +
+            "    numPositiveTests BIGINT DEFAULT NULL,\n" +
             "    numDeaths BIGINT DEFAULT NULL,\n" +
             "    numRecoveredCases BIGINT DEFAULT NULL,\n" +
-            "    numTested BIGINT DEFAULT NULL,\n" +
+            "    diffNumPositiveTests BIGINT DEFAULT NULL,\n" +
+            "    diffNumDeaths BIGINT DEFAULT NULL,\n" +
+            "    avgWeeklyDeaths DOUBLE DEFAULT NULL,\n" +
+            "    avgWeeklyConfirmedCases DOUBLE DEFAULT NULL,\n" +
+            "    avgWeeklyRecoveredCases DOUBLE DEFAULT NULL,\n" +
             "    PRIMARY KEY (id)\n" +
             ");\n" +
             "CREATE INDEX latestHealthRecordsRegionIdIdx ON latest_health_records (regionId);";
@@ -347,10 +355,14 @@ public class DatabaseBuilder {
             createTables(connector);
 
             for (Insertable toInsert : filteredInsertables) {
-                for (PreparedStatement insertStatement : toInsert.getStatement(connector)) {
-                    try(PreparedStatement closableStatement = insertStatement) {
-                        connector.executePreparedStatement(closableStatement);
+                try {
+                    for (PreparedStatement insertStatement : toInsert.getStatement(connector)) {
+                        try (PreparedStatement closableStatement = insertStatement) {
+                            connector.executePreparedStatement(closableStatement);
+                        }
                     }
+                } catch (NumberFormatException e) {
+                    throw new NumberFormatException( e.getLocalizedMessage() + "\n" + toInsert);
                 }
             }
         } catch (Exception e) {

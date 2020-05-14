@@ -36,9 +36,13 @@ public class LatestHealthRecords {
     private Long totalConfirmedCases;
     private Long totalRecoveredCases;
     private Long totalTestedCases;
-    private Long numActiveCases;
+    private Long numPositiveTests;
     private Long numDeaths;
     private Long numRecoveredCases;
-    private Long numTested;
+    private Long diffNumPositiveTests;
+    private Long diffNumDeaths;
+    private Double avgWeeklyDeaths;
+    private Double avgWeeklyConfirmedCases;
+    private Double avgWeeklyRecoveredCases;
     private String dataSource;
 }

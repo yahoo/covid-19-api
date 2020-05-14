@@ -40,10 +40,14 @@ public class HealthRecords implements Insertable {
     private String totalConfirmedCases;
     private String totalRecoveredCases;
     private String totalTestedCases;
-    private String numActiveCases;
+    private String numPositiveTests;
     private String numDeaths;
     private String numRecoveredCases;
-    private String numTests;
+    private String diffNumPositiveTests;
+    private String diffNumDeaths;
+    private String avgWeeklyDeaths;
+    private String avgWeeklyConfirmedCases;
+    private String avgWeeklyRecoveredCases;
     private String dataSource;
 
     // Fields from foreign table
@@ -61,10 +65,11 @@ public class HealthRecords implements Insertable {
     protected final String getInsertStatement() {
         return String.format(
                 "INSERT INTO %s ("
-                + "id, label, referenceDate, regionId, longitude, latitude, wikiId, dataSource,"
+                + "id, label, referenceDate, regionId, longitude, latitude, wikiId, dataSource, "
                 + "totalDeaths, totalConfirmedCases, totalRecoveredCases, totalTestedCases, "
-                + "numActiveCases, numDeaths, numRecoveredCases, numTested) "
-                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
+                + "numPositiveTests, numDeaths, numRecoveredCases, diffNumPositiveTests, diffNumDeaths, "
+                + "avgWeeklyDeaths, avgWeeklyConfirmedCases, avgWeeklyRecoveredCases) "
+                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);",
                 getTableName());
     }
 
@@ -89,10 +94,14 @@ public class HealthRecords implements Insertable {
         statement.setObject(10, totalConfirmedCases == null ? null : Long.valueOf(totalConfirmedCases));
         statement.setObject(11, totalRecoveredCases == null ? null : Long.valueOf(totalRecoveredCases));
         statement.setObject(12, totalTestedCases == null ? null : Long.valueOf(totalTestedCases));
-        statement.setObject(13, numActiveCases == null ? null : Long.valueOf(numActiveCases));
+        statement.setObject(13, numPositiveTests == null ? null : Long.valueOf(numPositiveTests));
         statement.setObject(14, numDeaths == null ? null : Long.valueOf(numDeaths));
         statement.setObject(15, numRecoveredCases == null ? null : Long.valueOf(numRecoveredCases));
-        statement.setObject(16, numTests == null ? null : Long.valueOf(numTests));
+        statement.setObject(16, diffNumPositiveTests == null ? null : Long.valueOf(diffNumPositiveTests));
+        statement.setObject(17, diffNumDeaths == null ? null : Long.valueOf(diffNumDeaths));
+        statement.setObject(18, avgWeeklyDeaths == null ? null : Double.valueOf(avgWeeklyDeaths));
+        statement.setObject(19, avgWeeklyConfirmedCases == null ? null : Double.valueOf(avgWeeklyConfirmedCases));
+        statement.setObject(20, avgWeeklyRecoveredCases == null ? null : Double.valueOf(avgWeeklyRecoveredCases));
         return Arrays.asList(statement);
     }
 
