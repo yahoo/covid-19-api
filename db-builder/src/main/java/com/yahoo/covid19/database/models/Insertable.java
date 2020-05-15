@@ -25,7 +25,7 @@ public interface Insertable {
      * @return A prepared statement with parameters filled in.
      * @throws SQLException
      */
-    List<PreparedStatement> getStatement(DatabaseBuilder.DBConnector connector) throws SQLException;
+    List<PreparedStatement> getStatements(DatabaseBuilder.DBConnector connector) throws SQLException;
 
     /**
      * Validates the input record prior to DB insertion.

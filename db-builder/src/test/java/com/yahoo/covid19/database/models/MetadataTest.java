@@ -21,9 +21,9 @@ public class MetadataTest {
 
     @Test
     public void testDateExtraction() {
-        HealthRecords record1 = new HealthRecords();
-        HealthRecords record2 = new HealthRecords();
-        HealthRecords record3 = new HealthRecords();
+        LatestHealthRecords record1 = new LatestHealthRecords();
+        LatestHealthRecords record2 = new LatestHealthRecords();
+        LatestHealthRecords record3 = new LatestHealthRecords();
         record1.setReferenceDate("2020-07-01 00:00:02");
         record2.setReferenceDate("2020-07-01 00:00:00");
         record3.setReferenceDate("2020-07-03 00:00:00");

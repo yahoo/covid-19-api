@@ -40,10 +40,10 @@ public class Metadata implements Insertable {
         String maxDate = null;
 
         for (Insertable insertable : insertables) {
-            if (insertable.getTableName().equals(HealthRecords.TABLE_NAME)
-                    || insertable.getTableName().equals(LatestHealthRecords.TABLE_NAME)) {
-                HealthRecords record = (HealthRecords) insertable;
-                String currentDate = ((HealthRecords) insertable).getReferenceDate();
+            if (insertable.getTableName().equals(LatestHealthRecords.TABLE_NAME)
+                    || insertable.getTableName().equals(HistoricalHealthRecords.TABLE_NAME)) {
+                LatestHealthRecords record = (LatestHealthRecords) insertable;
+                String currentDate = ((LatestHealthRecords) insertable).getReferenceDate();
                 if (minDate == null) {
                     minDate = currentDate;
                     maxDate = currentDate;
@@ -65,7 +65,7 @@ public class Metadata implements Insertable {
     }
 
     @Override
-    public List<PreparedStatement> getStatement(DatabaseBuilder.DBConnector connector) throws SQLException {
+    public List<PreparedStatement> getStatements(DatabaseBuilder.DBConnector connector) throws SQLException {
         java.util.Date startDate = null;
         java.util.Date endDate = null;
         try {

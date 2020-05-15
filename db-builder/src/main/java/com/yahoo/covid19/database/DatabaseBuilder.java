@@ -6,8 +6,8 @@
 
 package com.yahoo.covid19.database;
 
-import com.yahoo.covid19.database.models.HealthRecords;
 import com.yahoo.covid19.database.models.LatestHealthRecords;
+import com.yahoo.covid19.database.models.HistoricalHealthRecords;
 import com.yahoo.covid19.database.models.Insertable;
 import com.yahoo.covid19.database.models.Metadata;
 import com.yahoo.covid19.database.models.Places;
@@ -130,14 +130,6 @@ public class DatabaseBuilder {
             "    totalConfirmedCases BIGINT DEFAULT NULL,\n" +
             "    totalRecoveredCases BIGINT DEFAULT NULL,\n" +
             "    totalTestedCases BIGINT DEFAULT NULL,\n" +
-            "    numPositiveTests BIGINT DEFAULT NULL,\n" +
-            "    numDeaths BIGINT DEFAULT NULL,\n" +
-            "    numRecoveredCases BIGINT DEFAULT NULL,\n" +
-            "    diffNumPositiveTests BIGINT DEFAULT NULL,\n" +
-            "    diffNumDeaths BIGINT DEFAULT NULL,\n" +
-            "    avgWeeklyDeaths DOUBLE DEFAULT NULL,\n" +
-            "    avgWeeklyConfirmedCases DOUBLE DEFAULT NULL,\n" +
-            "    avgWeeklyRecoveredCases DOUBLE DEFAULT NULL,\n" +
             "    PRIMARY KEY (id)\n" +
             ");\n" +
             "CREATE INDEX latestHealthRecordsRegionIdIdx ON latest_health_records (regionId);";
@@ -262,7 +254,7 @@ public class DatabaseBuilder {
             } else if (fileName.matches(".*/data/by-region-\\d{4}-\\d{2}-\\d{2}\\.json")) {
                 log.info("Processing Data File: {}", fileName);
                 BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
-                processInsertable(HealthRecords.class, reader);
+                processInsertable(HistoricalHealthRecords.class, reader);
             } else if (fileName.endsWith("by-region-latest.json")) {
                 log.info("Processing Data File: {}", fileName);
                 BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
@@ -355,7 +347,7 @@ public class DatabaseBuilder {
             createTables(connector);
 
             for (Insertable toInsert : filteredInsertables) {
-                for (PreparedStatement insertStatement : toInsert.getStatement(connector)) {
+                for (PreparedStatement insertStatement : toInsert.getStatements(connector)) {
                     try(PreparedStatement closableStatement = insertStatement) {
                         connector.executePreparedStatement(closableStatement);
                     }
