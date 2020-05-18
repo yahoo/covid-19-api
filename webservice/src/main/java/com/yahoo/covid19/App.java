@@ -6,12 +6,18 @@
 package com.yahoo.covid19;
 
 import com.google.common.collect.Sets;
+
+import com.yahoo.covid19.models.HealthRecords;
+import com.yahoo.covid19.models.Place;
 import com.yahoo.elide.Elide;
 import com.yahoo.elide.ElideSettingsBuilder;
 import com.yahoo.elide.Injector;
 import com.yahoo.elide.audit.Slf4jLogger;
 import com.yahoo.elide.core.DataStore;
 import com.yahoo.elide.core.EntityDictionary;
+import com.yahoo.elide.core.filter.CaseAwareJPQLGenerator;
+import com.yahoo.elide.core.filter.FilterTranslator;
+import com.yahoo.elide.core.filter.Operator;
 import com.yahoo.elide.core.filter.dialect.RSQLFilterDialect;
 import com.yahoo.elide.datastores.jpa.JpaDataStore;
 import com.yahoo.elide.datastores.jpa.transaction.NonJtaTransaction;
@@ -77,6 +83,18 @@ public class App {
                 .withPermissionExecutor(BypassPermissionExecutor.class) //Permissions enforced in controller.
                 .withEncodeErrorResponses(true)
                 .withISO8601Dates("yyyy-MM-dd'T'HH:mm'Z'", TimeZone.getTimeZone("UTC"));
+
+
+        FilterTranslator.registerJPQLGenerator(Operator.IN_INSENSITIVE, HealthRecords.class, "placeId",
+                new CaseAwareJPQLGenerator(
+                        "%s IN (%s)",
+                        CaseAwareJPQLGenerator.Case.NONE,
+                        CaseAwareJPQLGenerator.ArgumentCount.MANY));
+        FilterTranslator.registerJPQLGenerator(Operator.IN_INSENSITIVE, Place.class, "id",
+                new CaseAwareJPQLGenerator(
+                        "%s IN (%s)",
+                        CaseAwareJPQLGenerator.Case.NONE,
+                        CaseAwareJPQLGenerator.ArgumentCount.MANY));
 
         return new Elide(builder.build());
     }

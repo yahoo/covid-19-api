@@ -7,6 +7,7 @@ package com.yahoo.covid19.models;
 
 import com.yahoo.elide.annotation.Include;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -25,6 +26,9 @@ public class HealthRecords {
     @JoinColumn(name = "regionId")
     @ManyToOne
     private Place place;
+
+    @Column(name = "regionId", insertable = false, updatable = false)
+    private String placeId;
 
     private String label;
     private String wikiId;
