@@ -100,7 +100,7 @@ public class Places implements Insertable {
     }
 
     @Override
-    public List<PreparedStatement> getStatement(DatabaseBuilder.DBConnector connector) throws SQLException {
+    public List<PreparedStatement> getStatements(DatabaseBuilder.DBConnector connector) throws SQLException {
         List<PreparedStatement> statements = new ArrayList<>();
         statements.add(getCommonStatement(connector));
 
