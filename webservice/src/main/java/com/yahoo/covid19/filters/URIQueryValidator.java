@@ -20,13 +20,13 @@ public class URIQueryValidator {
     private final List<String> regexRules;
 
     public enum RegexVariable {
-        DATE("'\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}Z'"),
+        DATE("'?\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}Z'?"),
         DATE_LIST("(?:'\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}Z',?)+"),
         NUMBER("\\d+"),
         ALPHA_NUMERIC("'[\\w\\-]+'"),
-        TYPE_AHEAD_CHARACTERS("'[^\u0000-\u001F']+'"),
+        TYPE_AHEAD_CHARACTERS("'[^\u0000-\u001F]+'"),
         PAGINATION("(?:&?page\\[\\w+\\]=\\d+)*"),
-        FIELD_ATTRIBUTES("(?:(?!country|state|states|county|counties|&)[\\w,])*"),
+        FIELD_ATTRIBUTES("(?:(?!place|places|&)[\\w,])*"),
         ALL(".*")
         ;
         private String regex;
