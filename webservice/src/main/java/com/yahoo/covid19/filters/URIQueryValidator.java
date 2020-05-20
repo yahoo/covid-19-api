@@ -26,7 +26,7 @@ public class URIQueryValidator {
         ALPHA_NUMERIC("'[\\w\\-]+'"),
         TYPE_AHEAD_CHARACTERS("'[^\u0000-\u001F]+'"),
         PAGINATION("(?:&?page\\[\\w+\\]=\\d+)*"),
-        FIELD_ATTRIBUTES("(?:(?!place|places|&)[\\w,])*"),
+        FIELD_ATTRIBUTES("(?:(?!(?:place|parents|children)(?:,|&|$))[\\w,])*"),
         ALL(".*")
         ;
         private String regex;

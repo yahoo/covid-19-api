@@ -89,5 +89,5 @@ security:
       - /api/json/v1/latestHealthRecords?fields[latestHealthRecords]={{FIELD_ATTRIBUTES}}place&filter=place.parents.id=={{TYPE_AHEAD_CHARACTERS}}&sort=-totalConfirmedCases{{PAGINATION}}
       - /api/json/v1/latestHealthRecords?fields[latestHealthRecords]={{FIELD_ATTRIBUTES}}place&filter=place.parents.id=={{TYPE_AHEAD_CHARACTERS}}{{PAGINATION}}
       - /api/json/v1/places?fields[places]={{FIELD_ATTRIBUTES}}&filter=label=={{TYPE_AHEAD_CHARACTERS}}{{PAGINATION}}
-      - /api/json/v1/places?fields[places]={{FIELD_ATTRIBUTES}}placeType,parents&filter=id=={{TYPE_AHEAD_CHARACTERS}}{{PAGINATION}}
+      - /api/json/v1/places?fields[places]={{FIELD_ATTRIBUTES}}parents&filter=id=={{TYPE_AHEAD_CHARACTERS}}{{PAGINATION}}
 
