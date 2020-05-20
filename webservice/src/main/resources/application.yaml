@@ -77,7 +77,7 @@ security:
     enabled: true
     duration: 3600
   whiteList:
-    ruleState: on
+    ruleState: warn
     uri:
       - /api/json/v1/metadata?{{PAGINATION}}
       - /api/json/v1/healthRecords?fields[healthRecords]={{FIELD_ATTRIBUTES}}&filter=place.id=={{TYPE_AHEAD_CHARACTERS}};referenceDate=ge={{DATE}}{{PAGINATION}}
