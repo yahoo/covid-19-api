@@ -60,7 +60,7 @@ public class URIQueryValidatorTest {
                 "\\Q/api/json/v1/places\\E" + ", " +
                 "\\Q/api/json/v1/places?filter=wikiId==\\E" + "'[^\u0000-\u001F]+'" + "(?:&?page\\[\\w+\\]=\\d+)*" + ", " +
                 "\\Q/api/json/v1/places?\\E" + "(?:&?page\\[\\w+\\]=\\d+)*" + ", " +
-                "\\Q/api/json/v1/places?fields[places]=\\E" + "(?:(?!place|places|&)[\\w,])*" + "(?:&?page\\[\\w+\\]=\\d+)*" +
+                "\\Q/api/json/v1/places?fields[places]=\\E" + "(?:(?!(?:place|parents|children)(?:,|&|$))[\\w,])*" + "(?:&?page\\[\\w+\\]=\\d+)*" +
                 "]",
                 queryValidator.getRegexRules().toString()
         );
@@ -299,8 +299,12 @@ public class URIQueryValidatorTest {
         Assertions.assertFalse(queryValidator.validate(uri7));
 
         //relationship not expected
-        String uri8 = "/api/json/v1/places?fields[places]=id,wikiId,places&page[limit]=20";
+        String uri8 = "/api/json/v1/places?fields[places]=id,wikiId,parents&page[limit]=20";
         Assertions.assertFalse(queryValidator.validate(uri8));
+
+        //relationship not expected
+        String uri9 = "/api/json/v1/places?fields[places]=id,wikiId,children&page[limit]=20";
+        Assertions.assertFalse(queryValidator.validate(uri9));
     }
 
     @Test
