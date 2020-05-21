@@ -24,6 +24,10 @@ spring:
   mvc:
     async:
       request-timeout: 8000
+  jpa:
+    properties:
+      hibernate:
+        default_batch_fetch_size: 100
 
 server:
   port: 8080
