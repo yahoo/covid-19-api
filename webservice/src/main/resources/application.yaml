@@ -83,7 +83,9 @@ security:
       - /api/json/v1/healthRecords?fields[healthRecords]={{FIELD_ATTRIBUTES}}&filter=place.id=={{TYPE_AHEAD_CHARACTERS}};referenceDate=ge={{DATE}}{{PAGINATION}}
       - /api/json/v1/healthRecords?fields[healthRecords]={{FIELD_ATTRIBUTES}}&filter=placeId=={{TYPE_AHEAD_CHARACTERS}};referenceDate=ge={{DATE}}{{PAGINATION}}
       - /api/json/v1/latestHealthRecords?fields[latestHealthRecords]={{FIELD_ATTRIBUTES}}&filter=place.id=={{TYPE_AHEAD_CHARACTERS}}{{PAGINATION}}
+      - /api/json/v1/latestHealthRecords?fields[latestHealthRecords]={{FIELD_ATTRIBUTES}}&filter=wikiId=={{TYPE_AHEAD_CHARACTERS}}{{PAGINATION}}
       - /api/json/v1/latestHealthRecords?fields[latestHealthRecords]={{FIELD_ATTRIBUTES}}place&fields[places]={{FIELD_ATTRIBUTES}}&filter=place.parents.parents.id=={{TYPE_AHEAD_CHARACTERS}}&include=place{{PAGINATION}}
+      - /api/json/v1/latestHealthRecords?fields[latestHealthRecords]={{FIELD_ATTRIBUTES}}place&fields[places]={{FIELD_ATTRIBUTES}}parents&filter=place.parents.parents.id=={{TYPE_AHEAD_CHARACTERS}}&include=place{{PAGINATION}}
       - /api/json/v1/latestHealthRecords?fields[latestHealthRecords]={{FIELD_ATTRIBUTES}}place&filter=place.id=={{TYPE_AHEAD_CHARACTERS}}{{PAGINATION}}
       - /api/json/v1/latestHealthRecords?fields[latestHealthRecords]={{FIELD_ATTRIBUTES}}place&filter=place.parents.id=={{TYPE_AHEAD_CHARACTERS}}&include=place{{PAGINATION}}
       - /api/json/v1/latestHealthRecords?fields[latestHealthRecords]={{FIELD_ATTRIBUTES}}place&filter=place.parents.id=={{TYPE_AHEAD_CHARACTERS}}&sort=-totalConfirmedCases{{PAGINATION}}
