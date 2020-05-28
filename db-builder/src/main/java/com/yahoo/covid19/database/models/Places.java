@@ -18,6 +18,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
@@ -43,9 +44,9 @@ public class Places implements Insertable {
     );
     private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     private static final String PLACE_INSERT_STATEMENT = "INSERT INTO place ("
-                + "id, type, label, wikiId, longitude, "
-                + "latitude, population) "
-                + "VALUES (?, ?, ?, ?, ?, ?, ?);";
+                + "id, type, label, wikiId, rank, "
+                + "longitude, latitude, population) "
+                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?);";
 
     private static final String RELATIONSHIP_INSERT_STATEMENT = "INSERT INTO relationship_hierarchy ("
             + "childId, parentId) "
@@ -60,6 +61,8 @@ public class Places implements Insertable {
     private final String population;
     @SerializedName(value = "parentId")
     private final List<String> parentIds;
+
+    private Integer rank = null;
 
     private transient ErrorCodes errorCode = OK;
 
@@ -84,9 +87,10 @@ public class Places implements Insertable {
         statement.setString(2, String.join(",", type));
         statement.setString(3, label);
         statement.setString(4, wikiId);
-        statement.setDouble(5, (longitude == null) ? 0 : Double.valueOf(longitude));
-        statement.setDouble(6, (latitude == null) ? 0 : Double.valueOf(latitude));
-        statement.setObject(7, population == null ? null : Long.valueOf(population));
+        statement.setInt(5, rank);
+        statement.setDouble(6, (longitude == null) ? 0 : Double.valueOf(longitude));
+        statement.setDouble(7, (latitude == null) ? 0 : Double.valueOf(latitude));
+        statement.setObject(8, population == null ? null : Long.valueOf(population));
         return statement;
     }
 
@@ -181,5 +185,21 @@ public class Places implements Insertable {
 
     @Override
     public void getForiegnKeyFields(Map<String, Insertable> foreignKeyMap) {
+        computeRank(foreignKeyMap);
+    }
+
+    private Integer computeRank(Map<String, Insertable> foreignKeyMap) {
+        if (rank != null) {
+            return rank;
+        }
+        if (parentIds == null || parentIds.isEmpty()) {
+            rank = 1;
+        } else {
+            rank = 1 + parentIds.stream()
+                    .mapToInt(parentId -> ((Places) foreignKeyMap.get(parentId)).computeRank(foreignKeyMap))
+                    .max()
+                    .orElse(0);
+        }
+        return rank;
     }
 }

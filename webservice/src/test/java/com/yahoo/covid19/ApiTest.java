@@ -266,6 +266,7 @@ public class ApiTest extends IntegrationTest {
                                                 attr("longitude", -77.01625),
                                                 attr("placeType", "StateAdminArea,CityTown"),
                                                 attr("population", 705749),
+                                                attr("rank", 3),
                                                 attr("wikiId", "Washington,_D.C.")
                                         ),
                                         relationships(
