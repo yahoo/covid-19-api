@@ -250,7 +250,69 @@ public class ApiTest extends IntegrationTest {
     }
 
     @Test
-    void placeTableTest() {
+    void placeEarthTableTest() {
+        when()
+                .get("/api/json/v1/places?fields[places]=label,latitude,longitude,placeType,population,rank,wikiId,parents&filter=id=='Earth'")
+                .then()
+                .log().all()
+                .body(equalTo(
+                        data(
+                                resource(
+                                        type("places"),
+                                        id("Earth"),
+                                        attributes(
+                                                attr("label", "Earth"),
+                                                attr("latitude", 0.0),
+                                                attr("longitude", 0.0),
+                                                attr("placeType", "Supername"),
+                                                attr("population", null),
+                                                attr("rank", 1),
+                                                attr("wikiId", "Earth")
+                                        ),
+                                        relationships(
+                                                relation("parents", false)
+                                        )
+                                )
+                        ).toJSON())
+                )
+                .log().all()
+                .statusCode(HttpStatus.SC_OK);
+    }
+
+    @Test
+    void placeCountryTableTest() {
+        when()
+                .get("/api/json/v1/places?fields[places]=label,latitude,longitude,placeType,population,rank,wikiId,parents&filter=id=='United_States'")
+                .then()
+                .log().all()
+                .body(equalTo(
+                        data(
+                                resource(
+                                        type("places"),
+                                        id("United_States"),
+                                        attributes(
+                                                attr("label", "United States"),
+                                                attr("latitude", 37.16793),
+                                                attr("longitude", -95.84502),
+                                                attr("placeType", "Country"),
+                                                attr("population", 326687501),
+                                                attr("rank", 2),
+                                                attr("wikiId", "United_States")
+                                        ),
+                                        relationships(
+                                                relation("parents", false,
+                                                        linkage(type("places"), id("Earth"))
+                                                )
+                                        )
+                                )
+                        ).toJSON())
+                )
+                .log().all()
+                .statusCode(HttpStatus.SC_OK);
+    }
+
+    @Test
+    void placeStateTableTest() {
         when()
                 .get("/api/json/v1/places?filter=id=='Washington,_D.C.'")
                 .then()
