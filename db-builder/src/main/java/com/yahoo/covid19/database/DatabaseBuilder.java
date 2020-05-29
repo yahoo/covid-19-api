@@ -73,6 +73,7 @@ public class DatabaseBuilder {
             "    type VARCHAR(255) DEFAULT NULL,\n" +
             "    label VARCHAR(255) DEFAULT NULL,\n" +
             "    wikiId VARCHAR(255) DEFAULT NULL,\n" +
+            "    rank INT NOT NULL,\n" +
             "    longitude DOUBLE NOT NULL,\n" +
             "    latitude DOUBLE NOT NULL,\n" +
             "    population BIGINT DEFAULT NULL,\n" +

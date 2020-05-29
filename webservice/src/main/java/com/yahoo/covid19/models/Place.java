@@ -27,6 +27,7 @@ public class Place {
     private String placeType;
     private String label;
     private String wikiId;
+    private Integer rank;
     private Double longitude;
     private Double latitude;
     private Long population;
