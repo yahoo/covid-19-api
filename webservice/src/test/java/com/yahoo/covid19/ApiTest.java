@@ -130,19 +130,19 @@ public class ApiTest extends IntegrationTest {
     void jsonApiGetTest3() {
         when()
                 .get("/api/json/v1/healthRecords?fields[healthRecords]=label,latitude,longitude,referenceDate,wikiId,place"
-                        + "&filter[healthRecords]=referenceDate=='2020-05-01T00:00Z';label=='Washington, D.C.'")
+                        + "&filter[healthRecords]=referenceDate=='2020-05-02T00:00Z';label=='Washington, D.C.'")
                 .then()
                 .log().all()
                 .body(equalTo(
                         data(
                                 resource(
                                         type("healthRecords"),
-                                        id("7c5cff5f-3181-32fc-a8ad-9cfd02b77cb1"),
+                                        id("deb0cab8-e9b7-3118-9432-ed26dcf11c0e"),
                                         attributes(
                                                 attr("label", "Washington, D.C."),
                                                 attr("latitude", 38.90476),
                                                 attr("longitude", -77.01625),
-                                                attr("referenceDate", "2020-05-01T00:00Z"),
+                                                attr("referenceDate", "2020-05-02T00:00Z"),
                                                 attr("wikiId", "Washington,_D.C.")
                                         ),
                                         relationships(
