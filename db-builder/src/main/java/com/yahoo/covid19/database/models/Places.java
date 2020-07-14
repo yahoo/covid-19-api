@@ -37,7 +37,7 @@ import com.google.gson.annotations.SerializedName;
 @Data
 public class Places implements Insertable {
     public static final String TABLE_NAME = "places";
-    private static final String SUPERNAME = "AstronomicalObject";
+    private static final String EARTH_TYPE = "AstronomicalObject";
     private static final List<String> PLACE_TYPE_ORDER = Arrays.asList(
             "AstronomicalObject", "Country", "StateAdminArea", "CountyAdminArea", "CityTown", "Island", "Place"
     );
@@ -126,7 +126,7 @@ public class Places implements Insertable {
             return false;
         }
 
-        if (this.type.contains(SUPERNAME)) {
+        if (this.type.contains(EARTH_TYPE)) {
             return true;
         }
 
