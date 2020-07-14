@@ -96,24 +96,24 @@ public class ApiTest extends IntegrationTest {
     void jsonApiGetTest2() {
         when()
                 .get("/api/json/v1/healthRecords?fields[healthRecords]=label,latitude,longitude,referenceDate,wikiId,place"
-                        + "&filter[healthRecords]=referenceDate=='2020-05-01T00:00Z';id=='67986c35-74e1-3714-8707-6ffd0f6ca1b7'")
+                        + "&filter[healthRecords]=referenceDate=='2020-05-01T00:00Z';id=='0a5e3287-5fd4-391e-869c-9096491b5c46'")
                 .then()
                 .log().all()
                 .body(equalTo(
                         data(
                                 resource(
                                         type("healthRecords"),
-                                        id("67986c35-74e1-3714-8707-6ffd0f6ca1b7"),
+                                        id("0a5e3287-5fd4-391e-869c-9096491b5c46"),
                                         attributes(
-                                                attr("label", "Colombia"),
-                                                attr("latitude", 4.11641),
-                                                attr("longitude", -72.95853),
+                                                attr("label", "United States"),
+                                                attr("latitude", 37.16793),
+                                                attr("longitude", -95.84502),
                                                 attr("referenceDate", "2020-05-01T00:00Z"),
-                                                attr("wikiId", "Colombia")
+                                                attr("wikiId", "United_States")
                                         ),
                                         relationships(
                                                 relation("place", true,
-                                                        linkage(type("places"), id("Colombia"))
+                                                        linkage(type("places"), id("United_States"))
                                                 )
                                         )
                                 )
@@ -161,19 +161,19 @@ public class ApiTest extends IntegrationTest {
     void testEarthRecord() {
         when()
                 .get("/api/json/v1/healthRecords?fields[healthRecords]=label,latitude,longitude,referenceDate,wikiId,place"
-                        + "&filter=referenceDate=='2020-05-01T00:00Z';label=='Earth'")
+                        + "&filter=referenceDate=='2020-07-05T00:00Z';label=='Earth'")
                 .then()
                 .log().all()
                 .body(equalTo(
                         data(
                                 resource(
                                         type("healthRecords"),
-                                        id("311b5a8d-3f9d-3db0-aec6-a1adeac3c241"),
+                                        id("806bc8e2-da10-331f-a924-fb250be5e408"),
                                         attributes(
                                                 attr("label", "Earth"),
                                                 attr("latitude", 0.0),
                                                 attr("longitude", 0.0),
-                                                attr("referenceDate", "2020-05-01T00:00Z"),
+                                                attr("referenceDate", "2020-07-05T00:00Z"),
                                                 attr("wikiId", "Earth")
                                         ),
                                         relationships(
@@ -192,19 +192,19 @@ public class ApiTest extends IntegrationTest {
     void testCompoundFilterPredicate() {
         when()
                 .get("/api/json/v1/healthRecords?fields[healthRecords]=label,latitude,longitude,referenceDate,wikiId,place"
-                        + "&filter=referenceDate=='2020-05-01T00:00Z';place.parents=isempty=true")
+                        + "&filter=referenceDate=='2020-07-05T00:00Z';place.parents=isempty=true")
                 .then()
                 .log().all()
                 .body(equalTo(
                         data(
                                 resource(
                                         type("healthRecords"),
-                                        id("311b5a8d-3f9d-3db0-aec6-a1adeac3c241"),
+                                        id("806bc8e2-da10-331f-a924-fb250be5e408"),
                                         attributes(
                                                 attr("label", "Earth"),
                                                 attr("latitude", 0.0),
                                                 attr("longitude", 0.0),
-                                                attr("referenceDate", "2020-05-01T00:00Z"),
+                                                attr("referenceDate", "2020-07-05T00:00Z"),
                                                 attr("wikiId", "Earth")
                                         ),
                                         relationships(
@@ -252,7 +252,7 @@ public class ApiTest extends IntegrationTest {
     @Test
     void placeEarthTableTest() {
         when()
-                .get("/api/json/v1/places?fields[places]=label,latitude,longitude,placeType,population,rank,wikiId,parents&filter=id=='Earth'")
+                .get("/api/json/v1/places?fields[places]=label,latitude,longitude,placeType,rank,wikiId,parents&filter=id=='Earth'")
                 .then()
                 .log().all()
                 .body(equalTo(
@@ -264,8 +264,7 @@ public class ApiTest extends IntegrationTest {
                                                 attr("label", "Earth"),
                                                 attr("latitude", 0.0),
                                                 attr("longitude", 0.0),
-                                                attr("placeType", "Supername"),
-                                                attr("population", null),
+                                                attr("placeType", "AstronomicalObject"),
                                                 attr("rank", 1),
                                                 attr("wikiId", "Earth")
                                         ),

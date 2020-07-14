@@ -37,9 +37,9 @@ import com.google.gson.annotations.SerializedName;
 @Data
 public class Places implements Insertable {
     public static final String TABLE_NAME = "places";
-    private static final String SUPERNAME = "Supername";
+    private static final String EARTH_TYPE = "AstronomicalObject";
     private static final List<String> PLACE_TYPE_ORDER = Arrays.asList(
-            "Supername", "Country", "StateAdminArea", "CountyAdminArea", "CityTown", "Island", "Place"
+            "AstronomicalObject", "Country", "StateAdminArea", "CountyAdminArea", "CityTown", "Island", "Place"
     );
     private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     private static final String PLACE_INSERT_STATEMENT = "INSERT INTO place ("
@@ -126,7 +126,7 @@ public class Places implements Insertable {
             return false;
         }
 
-        if (this.type.contains(SUPERNAME)) {
+        if (this.type.contains(EARTH_TYPE)) {
             return true;
         }
 
