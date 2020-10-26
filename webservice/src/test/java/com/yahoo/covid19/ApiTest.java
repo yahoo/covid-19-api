@@ -293,7 +293,7 @@ public class ApiTest extends IntegrationTest {
                                                 attr("label", "United States"),
                                                 attr("latitude", 37.16793),
                                                 attr("longitude", -95.84502),
-                                                attr("placeType", "Country"),
+                                                attr("placeType", "Country,StateAdminArea"),
                                                 attr("population", 326687501),
                                                 attr("rank", 2),
                                                 attr("wikiId", "United_States")
